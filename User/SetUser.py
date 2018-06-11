@@ -4,6 +4,7 @@ from web3 import Web3, HTTPProvider, TestRPCProvider
 from web3.contract import ConciseContract
 import os
 import sys
+import ObjectNode
 Cpath = os.path.dirname(os.path.realpath(__file__))
 
 host = 'localhost'
@@ -13,8 +14,9 @@ passwd = '123'
 Email = sys.argv[1]
 Ehash = sys.argv[2]
 StudentID = sys.argv[3]
-tag = sys.argv[4]
-role = sys.argv[5]
+Object = ObjectNode.ObjectNode(Email)
+tag = Object.ObjectHash
+role = sys.argv[4]
 
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))

@@ -21,6 +21,10 @@ contract Users {
 	user[Email].role = r;
     }
 
+    function setTag(bytes24 Email, string t){
+        user[Email].tag = t;
+    }
+
     function GetEhash(bytes24 person) constant returns (string) {
         return user[person].Ehash;
     }

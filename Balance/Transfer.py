@@ -27,4 +27,5 @@ passwd = "123"
 w3.personal.unlockAccount(account,passwd)
 address = sys.argv[1]
 amount = int(sys.argv[2])
-contract_instance.transfer(address,amount,transact={'from': account})
+kk = contract_instance.transfer(address,amount,transact={'from': account})
+print(kk)
