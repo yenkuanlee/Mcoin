@@ -24,5 +24,5 @@ contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=
 
 Email = sys.argv[1]
 result = contract_instance.GetInfo(Email)
-print(result[2].encode())
+#print(result[2].encode())
 print(json.dumps(contract_instance.GetInfo(Email)))
