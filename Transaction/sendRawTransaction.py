@@ -3,4 +3,5 @@ import sys
 Rhash = sys.argv[1]
 
 w3 = Web3(HTTPProvider('http://localhost:3000'))
-w3.eth.sendRawTransaction(Rhash)
+T = w3.eth.sendRawTransaction(Rhash)
+print(T)

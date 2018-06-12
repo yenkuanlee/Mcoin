@@ -5,6 +5,7 @@ from web3.contract import ConciseContract
 import os
 import sys
 import subprocess
+Cpath = os.path.dirname(os.path.realpath(__file__))
 
 def ObjectPeer(PeerID):
     cmd = "echo '{ \"Data\": \""+PeerID+"\" }' | ipfs object put"
@@ -41,7 +42,7 @@ tag = "123"
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))
 w3.personal.unlockAccount(account,passwd)
-f = open('../User/users.json','r')
+f = open(Cpath+'/../User/users.json','r')
 line = f.readline()
 Jline = json.loads(line)
 f.close()
@@ -60,4 +61,5 @@ OT = ObjectPeer(T)
 NewObjectHash = AddHash(ObjectHash,OT,T)
 tag = NewObjectHash
 
-contract_instance.setTag(Email,tag, transact={'from': account})
+TID = contract_instance.setTag(Email,tag, transact={'from': account})
+print(TID)
