@@ -32,8 +32,8 @@ def get_info():
     Odict = dict()
     Odict['Ehash'] = Joutput[0]
     Odict['StudentID'] = Joutput[1]
-    Odict["IPFSHASH"] = Joutput[2]
-    cmd = "timeout 10 ipfs object get "+Odict["IPFSHASH"]
+    #Odict["IPFSHASH"] = Joutput[2]
+    cmd = "timeout 10 ipfs object get "+Joutput[2]
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
     transaction_record = json.loads(output)
