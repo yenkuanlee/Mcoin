@@ -20,6 +20,6 @@ python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py 0xe6ab871f860d9f28
 $ python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/sendRawTransaction.py $RAW_TRANSACTION
 $ curl "http://172.16.0.17:5000/sendRawTransaction?RAW_TRANSACTION=123234345"
 
-$ python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/TransactionRecord.py yenkuanlee@gmail.com A#B#1
-$ curl "http://172.16.0.17:5000/TransactionRecord?Email=yenkuanlee@gmail.com&T=kevin800405@yahoo.com.tw#123"
+$ python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/TransactionRecord.py yenkuanlee@gmail.com kevin800405@yahoo.com.tw
+$ curl "http://172.16.0.17:5000/TransactionRecord?Email=yenkuanlee@gmail.com&T=kevin800405@yahoo.com.tw,,,123"
 ```

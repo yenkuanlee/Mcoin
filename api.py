@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 import os
 import subprocess
+import json
 
 app = Flask(__name__)
 
@@ -26,7 +27,23 @@ def get_info():
     Email = args['Email']
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/GetInfo.py "+Email
     output = subprocess.check_output(cmd, shell=True)
-    return output
+    output = output.decode("utf-8")
+    Joutput = json.loads(output)
+    Odict = dict()
+    Odict['Ehash'] = Joutput[0]
+    Odict['StudentID'] = Joutput[1]
+    Odict["IPFSHASH"] = Joutput[2]
+    cmd = "timeout 10 ipfs object get "+Odict["IPFSHASH"]
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    transaction_record = json.loads(output)
+    Odict['TransactionRecord'] = transaction_record
+    Odict['role'] = Joutput[3]
+    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/GetBalance.py "+Odict['Ehash']
+    output = subprocess.check_output(cmd, shell=True)
+    output = int(output.decode("utf-8"))
+    Odict['Balance'] = output
+    return json.dumps(Odict)
 
 @app.route('/GetBalance')
 def get_balance():
