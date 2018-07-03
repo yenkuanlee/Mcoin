@@ -39,6 +39,7 @@ def get_info():
     transaction_record = json.loads(output)
     Odict['TransactionRecord'] = transaction_record
     Odict['role'] = Joutput[3]
+    Odict['nounce'] = Joutput[4]
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/GetBalance.py "+Odict['Ehash']
     output = subprocess.check_output(cmd, shell=True)
     output = int(output.decode("utf-8"))

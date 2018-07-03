@@ -24,5 +24,7 @@ contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=
 
 Email = sys.argv[1]
 result = contract_instance.GetInfo(Email)
-#print(result[2].encode())
-print(json.dumps(contract_instance.GetInfo(Email)))
+nounce = w3.eth.getTransactionCount(result[0])
+result.append(str(nounce))
+print(json.dumps(result))
+#print(json.dumps(contract_instance.GetInfo(Email)))
