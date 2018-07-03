@@ -19,16 +19,7 @@ def set_user():
     StudentID = args['StudentID']
     role = args['role']
     os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    return "SUCCESS"
-
-@app.route('/SetUserX', methods=['POST'])
-def set_userX():
-    Email = request.form['Email']
-    Ehash = request.form['Ehash']
-    StudentID = request.form['StudentID']
-    role = request.form['role']
-    os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    return "SUCCESS"
+    return "good"
 
 @app.route('/GetInfo')
 def get_info():
@@ -59,13 +50,6 @@ def get_info():
 def get_balance():
     args = request.args
     Ehash = args['Ehash']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/GetBalance.py "+Ehash
-    output = subprocess.check_output(cmd, shell=True)
-    return output
-
-@app.route('/GetBalanceX', methods=['POST'])
-def get_balanceX():
-    Ehash = request.form['Ehash']
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/GetBalance.py "+Ehash
     output = subprocess.check_output(cmd, shell=True)
     return output
