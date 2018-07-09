@@ -34,3 +34,5 @@ contract_address = Jline['contract_address']
 contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=ConciseContract)
 
 contract_instance.setNode(Email,Ehash,StudentID,tag,role, transact={'from': account})
+
+os.system("python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py "+Ehash+" 1000")
