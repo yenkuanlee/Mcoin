@@ -35,4 +35,5 @@ contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=
 
 contract_instance.setNode(Email,Ehash,StudentID,tag,role, transact={'from': account})
 
-os.system("python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py "+Ehash+" 1000")
+#os.system("python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py "+Ehash+" 100")
+w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': w3.toWei(100, "ether")})
