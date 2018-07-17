@@ -39,7 +39,10 @@ def get_info():
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/GetInfo.py "+Email
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
-    Joutput = json.loads(output)
+    try:
+        Joutput = json.loads(output)
+    except:
+        return "NULL"
     Odict = dict()
     Odict['Ehash'] = Joutput[0]
     Odict['StudentID'] = Joutput[1]
@@ -63,7 +66,10 @@ def get_infoX():
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/GetInfo.py "+Email
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
-    Joutput = json.loads(output)
+    try:
+        Joutput = json.loads(output)
+    except:
+        return "NULL"
     Odict = dict()
     Odict['Ehash'] = Joutput[0]
     Odict['StudentID'] = Joutput[1]

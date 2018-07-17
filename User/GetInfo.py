@@ -22,9 +22,11 @@ contract_address = Jline['contract_address']
 # Contract instance in concise mode
 contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=ConciseContract)
 
-Email = sys.argv[1]
-result = contract_instance.GetInfo(Email)
-nounce = w3.eth.getTransactionCount(result[0])
-result.append(str(nounce))
-print(json.dumps(result))
-#print(json.dumps(contract_instance.GetInfo(Email)))
+try:
+    Email = sys.argv[1]
+    result = contract_instance.GetInfo(Email)
+    nounce = w3.eth.getTransactionCount(result[0])
+    result.append(str(nounce))
+    print(json.dumps(result))
+except:
+    print("NULL")
