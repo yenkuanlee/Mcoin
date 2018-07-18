@@ -42,7 +42,7 @@ def get_info():
     try:
         Joutput = json.loads(output)
     except:
-        return "NULL"
+        return ""
     Odict = dict()
     Odict['Ehash'] = Joutput[0]
     Odict['StudentID'] = Joutput[1]
@@ -69,7 +69,7 @@ def get_infoX():
     try:
         Joutput = json.loads(output)
     except:
-        return "NULL"
+        return ""
     Odict = dict()
     Odict['Ehash'] = Joutput[0]
     Odict['StudentID'] = Joutput[1]
