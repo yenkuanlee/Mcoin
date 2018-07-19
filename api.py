@@ -20,8 +20,14 @@ def set_user():
     Ehash = args['Ehash']
     StudentID = args['StudentID']
     role = args['role']
-    os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    return "SUCCESS"
+    #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
+    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    Odict = dict()
+    Odict["status"] = "SUCCESS"
+    Odict["TID"] = output.split("\n")[1]
+    return json.dumps(Odict)
 
 @app.route('/SetUserX', methods=['POST'])
 def set_userX():
@@ -29,8 +35,14 @@ def set_userX():
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
     role = request.form['role']
-    os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    return "SUCCESS"
+    #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
+    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    Odict = dict()
+    Odict["status"] = "SUCCESS"
+    Odict["TID"] = output.split("\n")[1]
+    return json.dumps(Odict)
 
 @app.route('/GetInfo')
 def get_info():
