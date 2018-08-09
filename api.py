@@ -147,10 +147,11 @@ def transaction_recordX():
     return output
 
 # Mvote
-## get all vote information
-## make a vote
-## do vote
-## see the status of one vote
+## get all vote information : Mvote/Application/GetAppInfo.py
+## make a vote : Mvote/Vote/SetVote.py
+## do vote : Mvote/Vote/Vote.py
+## see the status of one vote : Mvote/Vote/CheckVote.py
+## see the result of one vote : Mvote/Vote/GetTicketNumber.py
 
 if __name__ == '__main__':
     app.run(host='172.16.0.17', debug=True)
