@@ -146,5 +146,11 @@ def transaction_recordX():
     output = subprocess.check_output(cmd, shell=True)
     return output
 
+# Mvote
+## get all vote information
+## make a vote
+## do vote
+## see the status of one vote
+
 if __name__ == '__main__':
     app.run(host='172.16.0.17', debug=True)
