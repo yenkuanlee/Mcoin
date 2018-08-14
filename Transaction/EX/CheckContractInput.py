@@ -25,7 +25,7 @@ f.close()
 
 abi = Jline
 
-Transaction = web3.eth.getTransaction(TID)
+Transaction = w3.eth.getTransaction(TID)
 print(Transaction.input)
 
 
@@ -45,3 +45,5 @@ def decode_contract_call(contract_abi: list, call_data: str):
                 # Invalid args
                 continue
             return method_name, args
+
+print(decode_contract_call(abi,Transaction.input))
