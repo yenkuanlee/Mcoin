@@ -129,6 +129,23 @@ def send_raw_transactionX():
     output = subprocess.check_output(cmd, shell=True)
     return output
 
+@app.route('/CheckTransaction')
+def check_transaction():
+    args = request.args
+    TID = args['TID']
+    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/CheckTransaction.py "+TID
+    output = subprocess.check_output(cmd, shell=True)
+    return output
+
+@app.route('/CheckTransactionX', methods=['POST'])
+def check_transactionX():
+    TID = request.form['TID']
+    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/CheckTransaction.py "+TID
+    output = subprocess.check_output(cmd, shell=True)
+    return output
+    
+
+'''
 @app.route('/TransactionRecord')
 def transaction_record():
     args = request.args
@@ -145,6 +162,7 @@ def transaction_recordX():
     cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/TransactionRecord.py "+Email+" "+T
     output = subprocess.check_output(cmd, shell=True)
     return output
+'''
 
 # Mvote
 ## get all vote information : Mvote/Application/GetAppInfo.py
