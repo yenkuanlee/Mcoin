@@ -65,4 +65,4 @@ NewObjectHash = AddHash(ObjectHash,OT,T)
 tag = NewObjectHash
 
 TID = contract_instance.functions.setTag(w3.toBytes(text=Email),tag).transact({'from': account})
-print(TID)
+print(TID.hex())
