@@ -26,7 +26,7 @@ f.close()
 abi = Jline
 
 Transaction = w3.eth.getTransaction(TID)
-print(Transaction.input)
+#print(Transaction.input)
 
 
 def decode_contract_call(contract_abi: list, call_data: str):
@@ -46,4 +46,7 @@ def decode_contract_call(contract_abi: list, call_data: str):
                 continue
             return method_name, args
 
-print(decode_contract_call(abi,Transaction.input))
+result = decode_contract_call(abi,Transaction.input)
+#result = decode_contract_call(abi,"0xa9059cbb0000000000000000000000006cd5d27785e38b28a0d9656bcc795d90a4d670c500000000000000000000000000000000000000000000000000000000000001f4")
+print(result)
+print(Transaction['from'])
