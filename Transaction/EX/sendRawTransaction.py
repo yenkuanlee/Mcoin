@@ -39,5 +39,6 @@ for x in Tlist:
     Tinfo.append(str(datetime.datetime.now()).replace(" ","T"))
     Tinfo.append(x)
     b = Trecord.Trecord(Tinfo[0])
-    print(b.record(json.dumps(Tinfo).replace("\\u0000","")))
-
+    RecordID = b.record(json.dumps(Tinfo).replace("\\u0000",""))
+    c = Trecord.Trecord(Tinfo[1])
+    RecordID = c.record(json.dumps(Tinfo).replace("\\u0000",""))

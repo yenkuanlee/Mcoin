@@ -29,7 +29,9 @@ class InputDecoder:
         self.abi = Jline
 
         self.Transaction = self.w3.eth.getTransaction(_TID)
-        #print(Transaction.input)
+        #self.w3.eth.waitForTransactionReceipt(_TID)
+        #tx_receipt = self.w3.eth.getTransactionReceipt(_TID)
+        #print(tx_receipt)
 
 
     def decode_contract_call(self,contract_abi: list, call_data: str):
