@@ -51,12 +51,13 @@ class InputDecoder:
 
     def Decoder(self):
         result = self.decode_contract_call(self.abi,self.Transaction.input)
+        if result[0]!="transfer" and result[0]!="transferFrom":
+            return "NotTransferException"
         Rdict = dict()
-        Rdict['sender'] = self.UserMapping(self.Transaction['from']).decode("utf-8")
-        Rdict['receiver'] = self.UserMapping(result[1][0]).decode("utf-8")
+        Rdict['sender'] = self.UserMapping(self.Transaction['from'])
+        Rdict['receiver'] = self.UserMapping(result[1][0])
         Rdict['mcoin'] = result[1][1]
-        return Rdict
-        #return (self.UserMapping(self.Transaction['from']).decode("utf-8"),self.UserMapping(result[1][0]).decode("utf-8"),result[1][1])
+        return [self.UserMapping(self.Transaction['from']).decode("utf-8"),self.UserMapping(result[1][0]).decode("utf-8"),result[1][1]]
 
     def UserMapping(self,Ehash):
         f = open(self.Cpath+'/../../User/EX/users.json','r')
