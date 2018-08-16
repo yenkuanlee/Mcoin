@@ -71,8 +71,9 @@ def get_info():
     Odict['nounce'] = Joutput[4]
     cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
     output = subprocess.check_output(cmd, shell=True)
-    output = int(output.decode("utf-8"))
-    Odict['Balance'] = output
+    tmp = output.decode("utf-8").split("#")
+    Odict['Balance'] = int(tmp[0])
+    Odict['Allowance'] = int(tmp[1])
     return json.dumps(Odict)
 
 @app.route('/GetInfoX', methods=['POST'])
@@ -98,8 +99,9 @@ def get_infoX():
     Odict['nounce'] = Joutput[4]
     cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
     output = subprocess.check_output(cmd, shell=True)
-    output = int(output.decode("utf-8"))
-    Odict['Balance'] = output
+    tmp = output.decode("utf-8").split("#")
+    Odict['Balance'] = int(tmp[0])
+    Odict['Allowance'] = int(tmp[1])
     return json.dumps(Odict)
 
 @app.route('/GetBalance')
