@@ -118,7 +118,7 @@ c.execute("insert into Vote values('"+contract_address+"','"+account+"','"+topic
 conn.commit()
 
 
-f = open('../app.json','r')
+f = open(Cpath+'/../app.json','r')
 line = f.readline()
 Jline = json.loads(line)
 f.close()

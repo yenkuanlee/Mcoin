@@ -2,11 +2,16 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 import os
+import requests
 import subprocess
 import json
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
+
+Lhost = '172.16.0.17'
+SuperEmail = "yenkuanlee@gmail.com"
+ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 
 @app.route('/kevin')
 def index():
@@ -20,8 +25,7 @@ def set_user():
     Ehash = args['Ehash']
     StudentID = args['StudentID']
     role = args['role']
-    #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
+    cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
     Odict = dict()
@@ -35,8 +39,7 @@ def set_userX():
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
     role = request.form['role']
-    #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/User/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role)
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
+    cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
     Odict = dict()
@@ -48,7 +51,7 @@ def set_userX():
 def get_info():
     args = request.args
     Email = args['Email']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/EX/GetInfo.py "+Email
+    cmd = "python3 "+ProjectPath+"/User/EX/GetInfo.py "+Email
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
     try:
@@ -66,7 +69,7 @@ def get_info():
     Odict['TransactionRecord'] = transaction_record
     Odict['role'] = Joutput[3]
     Odict['nounce'] = Joutput[4]
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/EX/GetBalance.py "+Odict['Ehash']
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
     output = subprocess.check_output(cmd, shell=True)
     output = int(output.decode("utf-8"))
     Odict['Balance'] = output
@@ -75,7 +78,7 @@ def get_info():
 @app.route('/GetInfoX', methods=['POST'])
 def get_infoX():
     Email = request.form['Email']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/User/EX/GetInfo.py "+Email
+    cmd = "python3 "+ProjectPath+"/User/EX/GetInfo.py "+Email
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
     try:
@@ -93,7 +96,7 @@ def get_infoX():
     Odict['TransactionRecord'] = transaction_record
     Odict['role'] = Joutput[3]
     Odict['nounce'] = Joutput[4]
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/EX/GetBalance.py "+Odict['Ehash']
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
     output = subprocess.check_output(cmd, shell=True)
     output = int(output.decode("utf-8"))
     Odict['Balance'] = output
@@ -103,14 +106,14 @@ def get_infoX():
 def get_balance():
     args = request.args
     Ehash = args['Ehash']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/EX/GetBalance.py "+Ehash
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Ehash
     output = subprocess.check_output(cmd, shell=True)
     return output
 
 @app.route('/GetBalanceX', methods=['POST'])
 def get_balanceX():
     Ehash = request.form['Ehash']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Balance/EX/GetBalance.py "+Ehash
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Ehash
     output = subprocess.check_output(cmd, shell=True)
     return output
 
@@ -118,14 +121,14 @@ def get_balanceX():
 def send_raw_transaction():
     args = request.args
     RAW_TRANSACTION = args['RAW_TRANSACTION']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
     output = subprocess.check_output(cmd, shell=True)
     return output
 
 @app.route('/sendRawTransactionX', methods=['POST'])
 def send_raw_transactionX():
     RAW_TRANSACTION = request.form['RAW_TRANSACTION']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
     output = subprocess.check_output(cmd, shell=True)
     return output
 
@@ -133,38 +136,79 @@ def send_raw_transactionX():
 def check_transaction():
     args = request.args
     TID = args['TID']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/CheckTransaction.py "+TID
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/CheckTransaction.py "+TID
     output = subprocess.check_output(cmd, shell=True)
     return output
 
 @app.route('/CheckTransactionX', methods=['POST'])
 def check_transactionX():
     TID = request.form['TID']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/CheckTransaction.py "+TID
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/CheckTransaction.py "+TID
     output = subprocess.check_output(cmd, shell=True)
     return output
+
+############################################################################################    
+# Mvote
+@app.route('/GetAppInfo')
+def get_app_info():
+    args = request.args
+    App = args['App']
+    cmd = "python3 "+ProjectPath+"/Application/GetAppInfo.py "+App
+    output = subprocess.check_output(cmd, shell=True)
+    tmp = output.decode("utf-8").split("\n")
+    return tmp[len(tmp)-2]
+
+@app.route('/Vote/GetTicketNumber')
+def vote_get_ticket_number():
+    args = request.args
+    contract_address = args['contract_address']
+    prop = args['prop']
+    cmd = "python3 "+ProjectPath+"/Application/Vote/GetTicketNumber.py "+contract_address+" "+prop
+    output = subprocess.check_output(cmd, shell=True)
+    return output
+
+@app.route('/Vote/SetVote')
+def vote_set_vote():
+    args = request.args
+    topic = args['topic']
+    prop = args['prop']
+    deadline = args['deadline']
+    number_of_prop = str(len(prop.split(",,,")))
+    total_ticket = "10000"
+    cmd = "python3 "+ProjectPath+"/Application/Vote/SetVote.py "+topic+" "+number_of_prop+" "+total_ticket+" "+prop+" "+deadline
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+        return "SUCCESS"
+    except:
+        return "ERROR"
+
+@app.route('/Vote/DoVote')
+def do_vote():
+    args = request.args
+    RAW_TRANSACTION = args['RAW_TRANSACTION']
+    contract_address = args['contract_address']
+    to_prop = args['to_prop']
+    user_info = {"RAW_TRANSACTION":RAW_TRANSACTION}
+    r = requests.post("http://"+Lhost+":5000/sendRawTransactionX", data=user_info)
+    
+    TID = json.loads(r.text)[0]
+    user_info = {"TID":TID}
+    r2 = requests.post("http://"+Lhost+":5000/CheckTransactionX", data=user_info)
+
+    Jinfo = json.loads(r2.text)
+    receiver = Jinfo['receiver']
+    mcoin = Jinfo['mcoin']
+    if receiver != SuperEmail:
+        return json.dumps({"ERROR":TID})
+
+    cmd = "python3 "+ProjectPath+"/Application/Vote/Vote.py "+contract_address+" "+to_prop+" "+str(mcoin)
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+        return "SUCCESS"
+    except:
+        return "ERROR"
     
 
-'''
-@app.route('/TransactionRecord')
-def transaction_record():
-    args = request.args
-    Email = args['Email']
-    T = args['T']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/TransactionRecord.py "+Email+" "+T
-    output = subprocess.check_output(cmd, shell=True)
-    return output
-
-@app.route('/TransactionRecordX', methods=['POST'])
-def transaction_recordX():
-    Email = request.form['Email']
-    T = request.form['T']
-    cmd = "python3 /home/localadmin/yenkuanlee/Mcoin/Transaction/EX/TransactionRecord.py "+Email+" "+T
-    output = subprocess.check_output(cmd, shell=True)
-    return output
-'''
-
-# Mvote
 ## get all vote information : Mvote/Application/GetAppInfo.py
 ## make a vote : Mvote/Vote/SetVote.py
 ## do vote : Mvote/Vote/Vote.py
@@ -172,4 +216,4 @@ def transaction_recordX():
 ## see the result of one vote : Mvote/Vote/GetTicketNumber.py
 
 if __name__ == '__main__':
-    app.run(host='172.16.0.17', debug=True)
+    app.run(host=Lhost, debug=True)
