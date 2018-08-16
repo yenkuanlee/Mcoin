@@ -5,6 +5,8 @@ from solc import compile_source
 from web3.contract import ConciseContract
 import sys
 import os
+from web3.middleware import geth_poa_middleware
+
 Cpath = os.path.dirname(os.path.realpath(__file__))
 
 host = "localhost"
@@ -16,16 +18,18 @@ cnt = sys.argv[3]
 
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))
+w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+account = w3.toChecksumAddress(account)
 w3.personal.unlockAccount(account,passwd)
 f = open(Cpath+'/abi','r')
-abi = f.readline()
+Aabi = f.readline()
 f.close()
-abi = json.loads(abi)
+Aabi = json.loads(Aabi)
 
 # Contract instance in concise mode
-contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=ConciseContract)
+contract_instance = w3.eth.contract(abi=Aabi, address=contract_address)
 
 #w3.personal.unlockAccount(account, passwd)
-contract_instance.vote(int(to_Voter),int(cnt),transact={'from': account})
+contract_instance.functions.vote(int(to_Voter),int(cnt)).transact({'from': account})
 
 

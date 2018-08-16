@@ -8,6 +8,8 @@ from web3.contract import ConciseContract
 import sys
 import sqlite3
 import os
+from web3.middleware import geth_poa_middleware
+
 Cpath = os.path.dirname(os.path.realpath(__file__))
 
 def AddHash(Ahash, Bhash,ObjectName):
@@ -28,9 +30,6 @@ def AddHash(Ahash, Bhash,ObjectName):
         return output
     return NewOhash
 
-#host = '150.117.122.81'
-#account = '0x12a74e70f5c207d17b869daae374accc1a66eebc'
-#passwd = 'OR51M59'
 host = "localhost"
 account = "0x42946c2bb22ad422e7366d68d3ca07fb1862ff36"
 passwd = "123"
@@ -76,6 +75,8 @@ f.close()
 
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))
+w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+account = w3.toChecksumAddress(account)
 w3.personal.unlockAccount(account, passwd)
 # Instantiate and deploy contract
 contractt = w3.eth.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
@@ -101,7 +102,7 @@ while True:
 contract_address = tx_receipt['contractAddress']
 
 # Contract instance in concise mode
-contract_instance = w3.eth.contract(contract_interface['abi'], contract_address, ContractFactoryClass=ConciseContract)
+contract_instance = w3.eth.contract(abi=contract_interface['abi'], address=contract_address)
 
 print("account : "+account)
 print("contract address : "+contract_address)
@@ -117,14 +118,15 @@ c.execute("insert into Vote values('"+contract_address+"','"+account+"','"+topic
 conn.commit()
 
 
-f = open('../Application/app.json','r')
+f = open('../app.json','r')
 line = f.readline()
 Jline = json.loads(line)
 f.close()
 
 Aabi = Jline['abi']
 Acontract_address = Jline['contract_address']
-Acontract_instance = w3.eth.contract(Aabi, Acontract_address, ContractFactoryClass=ConciseContract)
+Acontract_instance = w3.eth.contract(abi=Aabi, address=Acontract_address)
+
 
 import ObjectNode
 MCU = ObjectNode.ObjectNode("MCU")
@@ -133,12 +135,12 @@ propPeer = MCU.ObjectPeer("prop")
 deadlinePeer = MCU.ObjectPeer("deadline")
 
 #Vgod = ObjectNode.ObjectNode("Vote") ### will retrive from smart contract
-VoteHash = Acontract_instance.GetOhash("Vote")
+VoteHash = Acontract_instance.functions.GetOhash(w3.toBytes(text="Vote")).call()
 
 a = ObjectNode.ObjectNode(topic)
 a.AddHash(accountPeer,account)
 a.AddHash(propPeer,prop)
 a.AddHash(deadlinePeer,deadline)
 NewHash = AddHash(VoteHash,a.ObjectHash,contract_address)
-Acontract_instance.setNode("Vote",NewHash, transact={'from': account})
+Acontract_instance.functions.setNode(w3.toBytes(text="Vote"),NewHash).transact({'from': account})
 os.system("timeout 10 ipfs pin add "+NewHash)
