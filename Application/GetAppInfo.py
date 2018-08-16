@@ -6,6 +6,7 @@ from web3.contract import ConciseContract
 import sys
 import os
 import ObjectNode
+from web3.middleware import geth_poa_middleware
 
 application = sys.argv[1]
 
@@ -29,6 +30,8 @@ passwd = '123'
 
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))
+w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+account = w3.toChecksumAddress(account)
 w3.personal.unlockAccount(account,passwd)
 f = open(Cpath+'/app.json','r')
 line = f.readline()
@@ -40,10 +43,9 @@ contract_address = Jline['contract_address']
 
 
 # Contract instance in concise mode
-contract_instance = w3.eth.contract(abi, contract_address, ContractFactoryClass=ConciseContract)
-###contract_instance.setNode("Vote","QmWvMxzFoKjUh4nF9Knf5XSYguVgzArzVZcsNXUJComLvD", transact={'from': account})
-###print(contract_instance.GetOhash("Vote"))
-AppHash = contract_instance.GetOhash(application)
+contract_instance = w3.eth.contract(abi=abi, address=contract_address)
+application = w3.toBytes(text=application)
+AppHash = contract_instance.functions.GetOhash(application).call()
 cmd = "timeout 10 ipfs object get "+AppHash
 output = subprocess.check_output(cmd, shell=True)
 Joutput = json.loads(output.decode("utf-8"))

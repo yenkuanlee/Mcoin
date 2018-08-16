@@ -23,6 +23,7 @@ contract_interface = compiled_sol['<stdin>:App']
 
 # web3.py instance
 w3 = Web3(HTTPProvider('http://'+host+':3000'))
+account = w3.toChecksumAddress(account)
 w3.personal.unlockAccount(account, passwd)
 # Instantiate and deploy contract
 contractt = w3.eth.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
@@ -48,7 +49,7 @@ while True:
 contract_address = tx_receipt['contractAddress']
 
 # Contract instance in concise mode
-contract_instance = w3.eth.contract(contract_interface['abi'], contract_address, ContractFactoryClass=ConciseContract)
+contract_instance = w3.eth.contract(abi=contract_interface['abi'], address=contract_address)
 
 Joutput = dict()
 fw = open('app.json','w')
