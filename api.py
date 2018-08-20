@@ -5,6 +5,8 @@ import os
 import requests
 import subprocess
 import json
+import time
+import hashlib
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
@@ -17,6 +19,20 @@ ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 def index():
     args = request.args
     return args['key1']
+
+@app.route('/Login', methods=['POST'])
+def login():
+    account = request.form['account']
+    passwd = request.form['passwd']
+    m = hashlib.md5()
+    ts = str(int(time.time()))
+    m.update(("MCU"+passwd+account+ts).encode('utf-8'))
+    h = m.hexdigest()
+    Odict = dict()
+    Odict['account'] = account
+    Odict['token'] = h
+    Odict['timestamp'] = ts
+    return json.dumps(Odict)
 
 @app.route('/SetUser')
 def set_user():
