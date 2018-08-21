@@ -41,6 +41,15 @@ def set_user():
     Ehash = args['Ehash']
     StudentID = args['StudentID']
     role = args['role']
+    
+    user_info = {"Email":Email}
+    try:
+        r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
+        if r.text != "ERROR":
+            return json.dumps({"status":"ERROR"})
+    except:
+        return json.dumps({"status":"ERROR"})
+    
     cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
@@ -55,6 +64,15 @@ def set_userX():
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
     role = request.form['role']
+    
+    user_info = {"Email":Email}
+    try:
+        r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
+        if r.text != "ERROR":
+            return json.dumps({"status":"ERROR"})
+    except:
+        return json.dumps({"status":"ERROR"})
+
     cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
     output = subprocess.check_output(cmd, shell=True)
     output = output.decode("utf-8")
@@ -79,14 +97,20 @@ def get_info():
     Odict['StudentID'] = Joutput[1]
     #Odict["IPFSHASH"] = Joutput[2]
     cmd = "timeout 10 ipfs object get "+Joutput[2]
-    output = subprocess.check_output(cmd, shell=True)
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
     output = output.decode("utf-8")
     transaction_record = json.loads(output)
     Odict['TransactionRecord'] = transaction_record
     Odict['role'] = Joutput[3]
     Odict['nounce'] = Joutput[4]
     cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
-    output = subprocess.check_output(cmd, shell=True)
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
     tmp = output.decode("utf-8").split("#")
     Odict['Balance'] = int(tmp[0])
     Odict['Allowance'] = int(tmp[1])
@@ -107,14 +131,20 @@ def get_infoX():
     Odict['StudentID'] = Joutput[1]
     #Odict["IPFSHASH"] = Joutput[2]
     cmd = "timeout 10 ipfs object get "+Joutput[2]
-    output = subprocess.check_output(cmd, shell=True)
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
     output = output.decode("utf-8")
     transaction_record = json.loads(output)
     Odict['TransactionRecord'] = transaction_record
     Odict['role'] = Joutput[3]
     Odict['nounce'] = Joutput[4]
     cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
-    output = subprocess.check_output(cmd, shell=True)
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
     tmp = output.decode("utf-8").split("#")
     Odict['Balance'] = int(tmp[0])
     Odict['Allowance'] = int(tmp[1])
