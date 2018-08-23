@@ -34,6 +34,7 @@ def login():
     Odict['timestamp'] = ts
     return json.dumps(Odict)
 
+'''
 @app.route('/SetUser')
 def set_user():
     args = request.args
@@ -57,9 +58,11 @@ def set_user():
     Odict["status"] = "SUCCESS"
     Odict["TID"] = output.split("\n")[1]
     return json.dumps(Odict)
+'''
 
 @app.route('/SetUserX', methods=['POST'])
 def set_userX():
+    WhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
     Email = request.form['Email']
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
@@ -67,11 +70,15 @@ def set_userX():
     
     user_info = {"Email":Email}
     try:
-        r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
-        if r.text != "ERROR" and "405 Method Not Allowed" not in r.text:
-            return json.dumps({"status":r.text})
-    except:
-        return json.dumps({"status":"ERROR"})
+        r = requests.post("http://"+Lhost+":5000/GetInfoX", data=user_info)
+        if Email in WhiteList:
+            pass
+        elif r.text != "ERROR": # Not New Email
+            Jr = json.loads(r.text)
+            if Jr["TransactionRecord"]["Data"] == Email: # already existed
+                return json.dumps({"status":"EmailAlreadyUsedException"})
+    except Exception as e:
+        return json.dumps({"status":e})
 
     cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
     output = subprocess.check_output(cmd, shell=True)

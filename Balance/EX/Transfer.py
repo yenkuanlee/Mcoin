@@ -31,3 +31,5 @@ address = w3.toChecksumAddress(sys.argv[1])
 amount = int(sys.argv[2])
 kk = contract_instance.functions.transfer(address,amount).transact({'from': account})
 print(kk.hex())
+
+TID = w3.eth.sendTransaction({'to': address, 'from': account, 'value': w3.toWei(100, "ether")})

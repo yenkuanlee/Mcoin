@@ -59,7 +59,7 @@ class InputDecoder:
         Rdict['sender'] = self.UserMapping(self.Transaction['from'])
         Rdict['receiver'] = self.UserMapping(result[1][0])
         Rdict['mcoin'] = result[1][1]
-        return [self.UserMapping(self.Transaction['from']).decode("utf-8"),self.UserMapping(result[1][0]).decode("utf-8"),result[1][1]]
+        return [self.UserMapping(self.Transaction['from']).decode("utf-8"),self.UserMapping(result[1][0]).decode("utf-8"),result[1][1],result[0]]
 
     def UserMapping(self,Ehash):
         f = open(self.Cpath+'/../../User/EX/users.json','r')
