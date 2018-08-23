@@ -45,8 +45,8 @@ def set_user():
     user_info = {"Email":Email}
     try:
         r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
-        if r.text != "ERROR":
-            return json.dumps({"status":"ERROR"})
+        if r.text != "ERROR" and "405 Method Not Allowed" not in r.text:
+            return json.dumps({"status":r.text})
     except:
         return json.dumps({"status":"ERROR"})
     
@@ -68,8 +68,8 @@ def set_userX():
     user_info = {"Email":Email}
     try:
         r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
-        if r.text != "ERROR":
-            return json.dumps({"status":"ERROR"})
+        if r.text != "ERROR" and "405 Method Not Allowed" not in r.text:
+            return json.dumps({"status":r.text})
     except:
         return json.dumps({"status":"ERROR"})
 
