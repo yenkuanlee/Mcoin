@@ -38,10 +38,11 @@ _numProposals = int(sys.argv[2])
 totalTicket = int(sys.argv[3])
 prop = sys.argv[4]
 deadline = sys.argv[5]
-Pdict = dict()
+#Pdict = dict()
 Plist = prop.split(",,,")
 num = 0
 Nprop = ""
+Npicture = ""
 for x in Plist:
     picture = "NULL"
     key = x.split("@@")[0]
@@ -50,12 +51,14 @@ for x in Plist:
         picture = x.split("@@")[1]
     except:
         pass
-    Pdict[key] = dict()
-    Pdict[key]["num"] = num
-    Pdict[key]["cnt"] = 0
-    Pdict[key]["picture"] = picture
+    Npicture += picture+",,,"
+    #Pdict[key] = dict()
+    #Pdict[key]["num"] = num
+    #Pdict[key]["cnt"] = 0
+    #Pdict[key]["picture"] = picture
     num += 1
 prop = Nprop[:-3]
+Npicture = Npicture[:-3]
 
 # Solidity source code
 f = open(Cpath+'/votes.sol','r')
@@ -109,13 +112,14 @@ print("contract address : "+contract_address)
 print("contract abi : "+json.dumps(contract_interface['abi']))
 
 
-
+'''
 conn = sqlite3.connect('/tmp/vote.db')
 c = conn.cursor()
 c.execute("create table if not exists Vote(contract_address text, account text, topic text, _numProposals int, prop text, deadline text);")
 
 c.execute("insert into Vote values('"+contract_address+"','"+account+"','"+topic+"',"+str(_numProposals)+",'"+json.dumps(Pdict)+"', '"+deadline+"');")
 conn.commit()
+'''
 
 
 f = open(Cpath+'/../app.json','r')
@@ -132,6 +136,7 @@ import ObjectNode
 MCU = ObjectNode.ObjectNode("MCU")
 accountPeer = MCU.ObjectPeer("account")
 propPeer = MCU.ObjectPeer("prop")
+picturePeer = MCU.ObjectPeer("Npicture")
 deadlinePeer = MCU.ObjectPeer("deadline")
 
 #Vgod = ObjectNode.ObjectNode("Vote") ### will retrive from smart contract
@@ -140,6 +145,7 @@ VoteHash = Acontract_instance.functions.GetOhash(w3.toBytes(text="Vote")).call()
 a = ObjectNode.ObjectNode(topic)
 a.AddHash(accountPeer,account)
 a.AddHash(propPeer,prop)
+a.AddHash(picturePeer,Npicture)
 a.AddHash(deadlinePeer,deadline)
 NewHash = AddHash(VoteHash,a.ObjectHash,contract_address)
 Acontract_instance.functions.setNode(w3.toBytes(text="Vote"),NewHash).transact({'from': account})

@@ -7,6 +7,8 @@ import subprocess
 import json
 import time
 import hashlib
+import ipfsapi
+import io
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
@@ -15,10 +17,14 @@ Lhost = '172.16.0.17'
 SuperEmail = "yenkuanlee@gmail.com"
 ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 
-@app.route('/kevin')
+IPFS_IP = '127.0.0.1'
+IPFS_PORT = 5001
+PicturePath = "/home/localadmin/yenkuanlee/Mcoin/Application/Vote/Picture/"
+PictureBias = "iii"
+
+@app.route('/kevin', methods=['POST'])
 def index():
-    args = request.args
-    return args['key1']
+    return request.form['key1']
 
 @app.route('/Login', methods=['POST'])
 def login():
@@ -262,7 +268,27 @@ def do_vote():
         return "SUCCESS"
     except:
         return "ERROR"
+
+@app.route('/Vote/PictureStore', methods=['POST'])
+def picture_store():
+    bcode = request.form['bcode']
+    ts = str(time.time())
+    fw = open(PicturePath+PictureBias+ts,'w')
+    fw.write(bcode)
+    fw.close()
+    api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
+    result = api.add(PicturePath+PictureBias+ts)
+    os.system("mv "+PicturePath+PictureBias+ts+" "+PicturePath+result['Hash'])
+    return result['Hash']
+
+@app.route('/Vote/PictureGet', methods=['POST'])
+def picture_get():
+    phash = request.form['phash']
+    api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
+    return api.cat(phash).decode('utf-8')
     
+    
+
 
 ## get all vote information : Mvote/Application/GetAppInfo.py
 ## make a vote : Mvote/Vote/SetVote.py

@@ -14,12 +14,14 @@ application = sys.argv[1]
 MCU = ObjectNode.ObjectNode("MCU")
 accountPeer = MCU.ObjectPeer("account")
 propPeer = MCU.ObjectPeer("prop")
+picturePeer = MCU.ObjectPeer("Npicture")
 deadlinePeer = MCU.ObjectPeer("deadline")
 
 # Set Index
 IndexDict = dict()
 IndexDict[accountPeer] = "account"
 IndexDict[propPeer] = "prop"
+IndexDict[picturePeer] = "Npicture"
 IndexDict[deadlinePeer] = "deadline"
 
 Cpath = os.path.dirname(os.path.realpath(__file__))
