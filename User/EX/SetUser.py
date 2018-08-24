@@ -42,5 +42,5 @@ contract_instance.functions.setNode(Email,w3.toChecksumAddress(Ehash),StudentID,
 
 
 #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py "+Ehash+" 100")
-TID = w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': w3.toWei(100, "ether")})
+TID = w3.eth.sendTransaction({'to': w3.toChecksumAddress(Ehash), 'from': account, 'value': w3.toWei(100, "ether")})
 ###print(TID)
