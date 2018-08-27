@@ -4,6 +4,7 @@ from web3 import Web3, HTTPProvider, TestRPCProvider
 from web3.contract import ConciseContract
 import os
 import sys
+import sqlite3
 import ObjectNode
 from web3.middleware import geth_poa_middleware
 Cpath = os.path.dirname(os.path.realpath(__file__))
@@ -44,3 +45,12 @@ contract_instance.functions.setNode(Email,w3.toChecksumAddress(Ehash),StudentID,
 #os.system("python3 /home/localadmin/yenkuanlee/Mcoin/Balance/Transfer.py "+Ehash+" 100")
 TID = w3.eth.sendTransaction({'to': w3.toChecksumAddress(Ehash), 'from': account, 'value': w3.toWei(100, "ether")})
 ###print(TID)
+
+conn = sqlite3.connect(Cpath+'/LocalUsers.db')
+c = conn.cursor()
+c.execute("create table if not exists Lusers(Email text, status int, PRIMARY KEY(Email));")
+try:
+    c.execute("insert into Lusers values('"+sys.argv[1]+"',0);")
+    conn.commit()
+except:
+    pass
