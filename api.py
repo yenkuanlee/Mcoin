@@ -9,6 +9,7 @@ import time
 import hashlib
 import ipfsapi
 import io
+import sqlite3
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
@@ -21,6 +22,8 @@ IPFS_IP = '127.0.0.1'
 IPFS_PORT = 5001
 PicturePath = "/home/localadmin/yenkuanlee/Mcoin/Application/Vote/Picture/"
 PictureBias = "iii"
+
+LusersPath = "./User/EX/"
 
 @app.route('/kevin', methods=['POST'])
 def index():
@@ -287,14 +290,25 @@ def picture_get():
     api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
     return api.cat(phash).decode('utf-8')
     
-    
+############################################################################################
+##Lusers
+
+@app.route('/Lusers/GetLusers', methods=['POST'])
+def get_lusers():
+    ResultList = list()
+    conn = sqlite3.connect(LusersPath+'LocalUsers.db')
+    c = conn.cursor()
+    c.execute("create table if not exists Lusers(Email text, status int, PRIMARY KEY(Email));")
+    try:
+        c.execute("SELECT * FROM Lusers;")
+        #conn.commit()
+        for x in c:
+            ResultList.append({"Email":x[0], "status":x[1]})
+    except:
+        return {"status":"GetLusersFailed"}
+    return json.dumps(ResultList)
 
 
-## get all vote information : Mvote/Application/GetAppInfo.py
-## make a vote : Mvote/Vote/SetVote.py
-## do vote : Mvote/Vote/Vote.py
-## see the status of one vote : Mvote/Vote/CheckVote.py
-## see the result of one vote : Mvote/Vote/GetTicketNumber.py
 
 if __name__ == '__main__':
     app.run(host=Lhost, debug=True)
