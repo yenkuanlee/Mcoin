@@ -20,7 +20,7 @@ ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 
 IPFS_IP = '127.0.0.1'
 IPFS_PORT = 5001
-PicturePath = "/home/localadmin/yenkuanlee/Mcoin/Application/Vote/Picture/"
+PicturePath = ProjectPath+"Application/Vote/Picture/"
 PictureBias = "iii"
 
 LusersPath = "./User/EX/"
@@ -321,7 +321,15 @@ def set_lusers_status():
     except:
         return json.dumps({"status":"SetLusersStatusFailed"})
 
-
+@app.route('/Lusers/GetLatestUpdateTime', methods=['POST'])
+def get_lusers_update_time():
+    try:
+        f = open(ProjectPath+'/User/EX/latest','r')
+        line = f.readline()
+        line = line.replace("\n","")
+        return json.dumps({"status":"SUCCESS", "latest":line})
+    except:
+        return json.dumps({"status":"GetLatestUpdateTimeFailed"})
 
 if __name__ == '__main__':
     app.run(host=Lhost, debug=True)
