@@ -48,9 +48,9 @@ TID = w3.eth.sendTransaction({'to': w3.toChecksumAddress(Ehash), 'from': account
 
 conn = sqlite3.connect(Cpath+'/LocalUsers.db')
 c = conn.cursor()
-c.execute("create table if not exists Lusers(Email text, status int, PRIMARY KEY(Email));")
+c.execute("create table if not exists Lusers(Email text, balance int, status int, PRIMARY KEY(Email));")
 try:
-    c.execute("insert into Lusers values('"+sys.argv[1]+"',0);")
+    c.execute("insert into Lusers values('"+sys.argv[1]+"',0,0);")
     conn.commit()
 except:
     pass

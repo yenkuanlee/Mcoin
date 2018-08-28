@@ -298,15 +298,28 @@ def get_lusers():
     ResultList = list()
     conn = sqlite3.connect(LusersPath+'LocalUsers.db')
     c = conn.cursor()
-    c.execute("create table if not exists Lusers(Email text, status int, PRIMARY KEY(Email));")
+    c.execute("create table if not exists Lusers(Email text, balance int, status int, PRIMARY KEY(Email));")
     try:
         c.execute("SELECT * FROM Lusers;")
         #conn.commit()
         for x in c:
-            ResultList.append({"Email":x[0], "status":x[1]})
+            ResultList.append({"Email":x[0], "balance":x[1], "status":x[2]})
     except:
-        return {"status":"GetLusersFailed"}
+        return json.dumps({"status":"GetLusersFailed"})
     return json.dumps(ResultList)
+
+@app.route('/Lusers/SetLusersStatus', methods=['POST'])
+def set_lusers_status():
+    Email = request.form['Email']
+    status = request.form['status']
+    conn = sqlite3.connect(LusersPath+'LocalUsers.db')
+    c = conn.cursor()
+    try:
+        c.execute("UPDATE Lusers SET status="+status+" WHERE Email = '"+Email+"';")
+        conn.commit()
+        return json.dumps({"status":"SUCCESS"})
+    except:
+        return json.dumps({"status":"SetLusersStatusFailed"})
 
 
 
