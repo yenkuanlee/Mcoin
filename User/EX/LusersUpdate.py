@@ -14,10 +14,13 @@ def GetInfoBalance(Email):
     return Jr['Balance']
 
 def LusersUpdate():
+    Rlist = list()
     conn = sqlite3.connect(LusersPath+'LocalUsers.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM Lusers;")
-    for x in c:
+    lusers = c.execute("SELECT * FROM Lusers;")
+    for x in lusers:
+        Rlist.append(x)
+    for x in Rlist:
         c.execute("UPDATE Lusers set balance="+str(GetInfoBalance(x[0]))+" WHERE Email='"+x[0]+"'")
         conn.commit()
     conn.close()
