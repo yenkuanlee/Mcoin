@@ -69,6 +69,8 @@ class EthWeb3Framework:
                 Odict['nounce'] = "GetNonceFailed"
             Odict['Balance'] = self.GetBalance(Odict['Ehash'])
             Odict['Allowance'] = self.GetAllowance(Odict['Ehash'])
+            if Odict['Ehash']=='0x0000000000000000000000000000000000000000' and Odict['TransactionRecord'] == 'GetTransactionRecordFailed' and Odict['StudentID']=='' and Odict['role']=='':
+             return {"status":"NotExistedException"}
             return Odict
         except Exception as e:
             return {"status":"GetInfoFailed", "log":str(e)}
