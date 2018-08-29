@@ -1,15 +1,22 @@
+import datetime
 import io
 import ipfsapi
 import json
 from web3 import Web3, HTTPProvider, TestRPCProvider
 import os
 from web3.middleware import geth_poa_middleware
+from ethereum.abi import (
+    decode_abi,
+    normalize_name as normalize_abi_method_name,
+    method_id as get_abi_method_id)
+from ethereum.utils import encode_int, zpad, decode_hex
 
 SuperAccount = "0x42946c2bb22ad422e7366d68d3ca07fb1862ff36"
 ERC20contract_address = "0x06E8b961683Ed5CE732748bF6bcaFF2aAedb689E"
 ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 IPFS_IP = '127.0.0.1'
 IPFS_PORT = 5001
+EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/EX/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"
@@ -20,20 +27,22 @@ class EthWeb3Framework:
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
         self.w3 = Web3(HTTPProvider('http://localhost:3000'))
         self.w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+        ### Element contract
         f = open(Edict[element],'r')
         line = f.readline()
         Jline = json.loads(line)
         f.close()
-        abi = Jline['abi']
+        self.abi = Jline['abi']
         contract_address = Jline['contract_address']
-        self.contract_instance = self.w3.eth.contract(abi=abi, address=contract_address)
-        # ERC20 contract
+        self.contract_instance = self.w3.eth.contract(abi=self.abi, address=contract_address)
+        ### ERC20 contract
         f = open(Edict['Balance'],'r')
         line = f.readline()
-        Jline = json.loads(line)
+        self.ERC20abi = json.loads(line)
         f.close()
-        self.ERC20contract_instance = self.w3.eth.contract(abi=Jline, address=ERC20contract_address)
+        self.ERC20contract_instance = self.w3.eth.contract(abi=self.ERC20abi, address=ERC20contract_address)
 
+    ## Balance
     def GetBalance(self,Ehash):
         try:
             address = self.w3.toChecksumAddress(Ehash)
@@ -50,6 +59,7 @@ class EthWeb3Framework:
         except:
             return "GetAllowanceFailed"
 
+    ## User
     def GetInfo(self,Email):
         Odict = dict()
         try:
@@ -70,19 +80,98 @@ class EthWeb3Framework:
             Odict['Balance'] = self.GetBalance(Odict['Ehash'])
             Odict['Allowance'] = self.GetAllowance(Odict['Ehash'])
             if Odict['Ehash']=='0x0000000000000000000000000000000000000000' and Odict['TransactionRecord'] == 'GetTransactionRecordFailed' and Odict['StudentID']=='' and Odict['role']=='':
-             return {"status":"NotExistedException"}
+                return {"status":"NotExistedException"}
+            Odict['status'] = "SUCCESS"
             return Odict
         except Exception as e:
             return {"status":"GetInfoFailed", "log":str(e)}
 
+    def UserMapping(self,Ehash):
+        Ehash = self.w3.toChecksumAddress(Ehash)
+        result = self.contract_instance.functions.GetUserMapping(Ehash).call().decode("utf-8")
+        return result
+
     def SetUser(self,Email,Ehash,StudentID,role):
+        info = self.GetInfo(Email)
+        if Email in EmailWhiteList:
+            pass
+        elif info['status']!='NotExistedException':
+            return {"status":"EmailAlreadyUsedException"}
         account = self.w3.toChecksumAddress(SuperAccount)
         Tbyte = json.dumps({"Data":Email}).encode()
         Email = self.w3.toBytes(text=Email)
         Ehash = self.w3.toChecksumAddress(Ehash)
         tag = self.api.object_put(io.BytesIO(Tbyte))['Hash']
         self.api.pin_add(tag)
-        self.w3.personal.unlockAccount(account,"123")
-        self.contract_instance.functions.setNode(Email,Ehash,StudentID,tag,role).transact({'from': account})
-        TID = self.w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': self.w3.toWei(100, "ether")})
-        return {"status":"SUCCESS", "TID":TID}
+        try:
+            self.w3.personal.unlockAccount(account,"123")
+            self.contract_instance.functions.setNode(Email,Ehash,StudentID,tag,role).transact({'from': account})
+            TID = self.w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': self.w3.toWei(100, "ether")})
+            return {"status":"SUCCESS", "TID":TID}
+        except:
+            return {"status":"SetUserFailed"}
+
+    ## Input Decoder
+    def decode_contract_call(self,contract_abi: list, call_data: str):
+        call_data_bin = decode_hex(call_data)
+        method_signature = call_data_bin[:4]
+        for description in contract_abi:
+            if description.get('type') != 'function':
+                continue
+            method_name = normalize_abi_method_name(description['name'])
+            arg_types = [item['type'] for item in description['inputs']]
+            method_id = get_abi_method_id(method_name, arg_types)
+            if zpad(encode_int(method_id), 4) == method_signature:
+                try:
+                    args = decode_abi(arg_types, call_data_bin[4:])
+                except AssertionError:
+                    # Invalid args
+                    continue
+                return method_name, args
+
+    def Decoder(self,TID):
+        Transaction = self.w3.eth.getTransaction(TID)
+        result = self.decode_contract_call(self.ERC20abi,Transaction.input)
+        if result[0]!="transfer" and result[0]!="transferFrom":
+            return {"status":"NotTransferException"}
+        Rdict = dict()
+        Rdict['sender'] = self.UserMapping(Transaction['from'])
+        Rdict['receiver'] = self.UserMapping(result[1][0])
+        Rdict['mcoin'] = result[1][1]
+        return [self.UserMapping(Transaction['from']),self.UserMapping(result[1][0]),result[1][1],result[0]]
+
+    ## Transaction
+    def Trecord(self,Email,T):
+        result = self.contract_instance.functions.GetInfo(self.w3.toBytes(text=Email)).call()
+        ObjectHash = result[2]
+        Tbyte = json.dumps({"Data":T}).encode()
+        Thash = self.api.object_put(io.BytesIO(Tbyte))['Hash']
+        self.api.pin_add(Thash)
+        tag = self.api.object_patch_add_link(ObjectHash,T,Thash)['Hash']
+        SuperAccountX = self.w3.toChecksumAddress(SuperAccount)
+        self.w3.personal.unlockAccount(SuperAccountX,"123")
+        TID = self.contract_instance.functions.setTag(self.w3.toBytes(text=Email),tag).transact({'from': SuperAccountX})
+        return {"status":"SUCCESS","TID":TID.hex()}
+
+    def sendRawTransaction(self,Rhash):
+        Tlist = list()
+        tmp = Rhash.split(",")
+        for x in tmp:
+            T = self.w3.eth.sendRawTransaction(x)
+            Transaction = self.w3.eth.getTransaction(T)
+            Tlist.append(str(T.hex()))
+        for x in Tlist:
+            Tinfo = self.Decoder(x)
+            Tinfo.append(str(datetime.datetime.now()).replace(" ","T"))
+            Tinfo.append(x)
+            self.Trecord(Tinfo[0],json.dumps(Tinfo).replace("\\u0000",""))
+            self.Trecord(Tinfo[1],json.dumps(Tinfo).replace("\\u0000",""))
+        return Tlist
+
+    def CheckTransaction(self,TID):
+        result = self.Decoder(TID)
+        Rdict = dict()
+        Rdict['sender'] = result[0]
+        Rdict['receiver'] = result[1]
+        Rdict['mcoin'] = result[2]
+        return json.loads(json.dumps(Rdict).replace("\\u0000",""))

@@ -20,7 +20,7 @@ ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 
 IPFS_IP = '127.0.0.1'
 IPFS_PORT = 5001
-PicturePath = ProjectPath+"Application/Vote/Picture/"
+PicturePath = ProjectPath+"/Application/Vote/Picture/"
 PictureBias = "iii"
 
 LusersPath = "./User/EX/"
