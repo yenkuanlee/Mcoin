@@ -60,23 +60,6 @@ def get_infoX():
     a = EthWeb3Framework.EthWeb3Framework()
     return json.dumps(a.GetInfo(Email))
 
-'''
-@app.route('/SetUserStatusX', methods=['POST'])
-def set_user_statusX():
-    Email = request.form['Email']
-    Ustatus = request.form['Ustatus']
-    a = EthWeb3Framework.EthWeb3Framework()
-    result = a.SetUserStatus(Email,Ustatus)
-    return json.dumps(result)
-
-@app.route('/GetBalanceX', methods=['POST'])
-def get_balanceX():
-    Ehash = request.form['Ehash']
-    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Ehash
-    output = subprocess.check_output(cmd, shell=True)
-    return output
-'''
-
 @app.route('/sendRawTransactionX', methods=['POST'])
 def send_raw_transactionX():
     RAW_TRANSACTION = request.form['RAW_TRANSACTION']

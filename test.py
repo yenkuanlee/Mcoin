@@ -15,7 +15,7 @@ print(a.GetInfo(Email))
 
 #print(a.SetUser(Email,Ehash,StudentID,role))
 #print(a.SetUserStatus(Email,"0"))
-#print(a.GetUserMapping(Ehash))
+#print(a.UserMapping(Ehash))
 
 #print(a.Trecord(Email,"666"))
 #print(a.sendRawTransaction(sys.argv[1]))

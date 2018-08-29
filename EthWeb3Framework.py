@@ -16,7 +16,7 @@ ERC20contract_address = "0x06E8b961683Ed5CE732748bF6bcaFF2aAedb689E"
 ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
 IPFS_IP = '127.0.0.1'
 IPFS_PORT = 5001
-EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
+EmailWhiteList = ['yyenkuanlee@gmail.com','luhaoming@gmail.com']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/EX/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"
@@ -93,7 +93,7 @@ class EthWeb3Framework:
     def UserMapping(self,Ehash):
         Ehash = self.w3.toChecksumAddress(Ehash)
         result = self.contract_instance.functions.GetUserMapping(Ehash).call().decode("utf-8")
-        return result
+        return result.replace("\x00","")
 
     def SetUser(self,Email,Ehash,StudentID,role):
         info = self.GetInfo(Email)
@@ -101,6 +101,8 @@ class EthWeb3Framework:
             pass
         elif info['status']!='NotExistedException':
             return {"status":"EmailAlreadyUsedException"}
+        elif self.UserMapping(Ehash)!="":
+            return {"status":"EhashAlreadyUsedException"}
         account = self.w3.toChecksumAddress(SuperAccount)
         Tbyte = json.dumps({"Data":Email}).encode()
         Email = self.w3.toBytes(text=Email)
