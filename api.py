@@ -46,33 +46,13 @@ def login():
 
 @app.route('/SetUserX', methods=['POST'])
 def set_userX():
-    '''
-    WhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
     Email = request.form['Email']
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
     role = request.form['role']
-    
-    user_info = {"Email":Email}
-    try:
-        r = requests.post("http://"+Lhost+":5000/GetInfoX", data=user_info)
-        if Email in WhiteList:
-            pass
-        elif r.text != "ERROR": # Not New Email
-            Jr = json.loads(r.text)
-            if Jr["TransactionRecord"]["Data"] == Email: # already existed
-                return json.dumps({"status":"EmailAlreadyUsedException"})
-    except Exception as e:
-        return json.dumps({"status":e})
-
-    cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
-    output = subprocess.check_output(cmd, shell=True)
-    output = output.decode("utf-8")
-    Odict = dict()
-    Odict["status"] = "SUCCESS"
-    Odict["TID"] = output.split("\n")[1]
-    return json.dumps(Odict)
-    '''
+    a = EthWeb3Framework.EthWeb3Framework()
+    result = a.SetUser(Email,Ehash,StudentID,role)
+    return json.dumps(result)
 
 @app.route('/GetInfoX', methods=['POST'])
 def get_infoX():
@@ -80,6 +60,7 @@ def get_infoX():
     a = EthWeb3Framework.EthWeb3Framework()
     return json.dumps(a.GetInfo(Email))
 
+'''
 @app.route('/SetUserStatusX', methods=['POST'])
 def set_user_statusX():
     Email = request.form['Email']
@@ -94,20 +75,21 @@ def get_balanceX():
     cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Ehash
     output = subprocess.check_output(cmd, shell=True)
     return output
+'''
 
 @app.route('/sendRawTransactionX', methods=['POST'])
 def send_raw_transactionX():
     RAW_TRANSACTION = request.form['RAW_TRANSACTION']
-    cmd = "python3 "+ProjectPath+"/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
-    output = subprocess.check_output(cmd, shell=True)
-    return output
+    a = EthWeb3Framework.EthWeb3Framework()
+    result = a.sendRawTransaction(RAW_TRANSACTION)
+    return json.dumps(result)
 
 @app.route('/CheckTransactionX', methods=['POST'])
 def check_transactionX():
     TID = request.form['TID']
-    cmd = "python3 "+ProjectPath+"/Transaction/EX/CheckTransaction.py "+TID
-    output = subprocess.check_output(cmd, shell=True)
-    return output
+    a = EthWeb3Framework.EthWeb3Framework()
+    result = a.CheckTransaction(TID)
+    return json.dumps(result)
 
 ############################################################################################    
 # Mvote
@@ -209,10 +191,12 @@ def get_lusers():
 @app.route('/Lusers/SetLusersStatus', methods=['POST'])
 def set_lusers_status():
     Email = request.form['Email']
-    status = request.form['status']
+    status = request.form['status'][0]
     conn = sqlite3.connect(LusersPath+'LocalUsers.db')
     c = conn.cursor()
     try:
+        a = EthWeb3Framework.EthWeb3Framework()
+        result = a.SetUserStatus(Email,status)
         c.execute("UPDATE Lusers SET status="+status+" WHERE Email = '"+Email+"';")
         conn.commit()
         return json.dumps({"status":"SUCCESS"})

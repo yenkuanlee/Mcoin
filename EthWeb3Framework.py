@@ -111,7 +111,7 @@ class EthWeb3Framework:
             self.w3.personal.unlockAccount(account,"123")
             self.contract_instance.functions.setNode(Email,Ehash,StudentID,tag,role).transact({'from': account})
             TID = self.w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': self.w3.toWei(100, "ether")})
-            return {"status":"SUCCESS", "TID":TID}
+            return {"status":"SUCCESS", "TID":TID.hex()}
         except:
             return {"status":"SetUserFailed"}
 
