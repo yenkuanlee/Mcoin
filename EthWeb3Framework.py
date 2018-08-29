@@ -23,12 +23,12 @@ Edict['Application'] = ProjectPath+"/Application/app.json"
 Edict['Balance'] = ProjectPath+"/Balance/EX/abi"
 
 class EthWeb3Framework:
-    def __init__(self, element):
+    def __init__(self):
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
         self.w3 = Web3(HTTPProvider('http://localhost:3000'))
         self.w3.middleware_stack.inject(geth_poa_middleware, layer=0)
         ### Element contract
-        f = open(Edict[element],'r')
+        f = open(Edict["User"],'r')
         line = f.readline()
         Jline = json.loads(line)
         f.close()
@@ -81,6 +81,10 @@ class EthWeb3Framework:
             Odict['Allowance'] = self.GetAllowance(Odict['Ehash'])
             if Odict['Ehash']=='0x0000000000000000000000000000000000000000' and Odict['TransactionRecord'] == 'GetTransactionRecordFailed' and Odict['StudentID']=='' and Odict['role']=='':
                 return {"status":"NotExistedException"}
+            if result[2][0]=="Q":
+                Odict['UserStatus'] = 0
+            else:
+                Odict['UserStatus'] = result[2][0]
             Odict['status'] = "SUCCESS"
             return Odict
         except Exception as e:
@@ -110,6 +114,21 @@ class EthWeb3Framework:
             return {"status":"SUCCESS", "TID":TID}
         except:
             return {"status":"SetUserFailed"}
+
+    def SetUserStatus(self,Email,Ustatus):
+        try:
+            Email = self.w3.toBytes(text=Email)
+            result = self.contract_instance.functions.GetInfo(Email).call()
+            tag = result[2]
+            tag = Ustatus[0]+tag[1:]
+            if Ustatus=="0":
+                tag = "Q"+tag[1:]
+            SuperAccountX = self.w3.toChecksumAddress(SuperAccount)
+            self.w3.personal.unlockAccount(SuperAccountX,"123")
+            TID = self.contract_instance.functions.setTag(Email,tag).transact({'from': SuperAccountX})
+            return {"status":"SUCCESS", "TID":TID.hex()}
+        except Exception as e:
+            return {"status":"SetUserStatusFailed", "log":str(e)}
 
     ## Input Decoder
     def decode_contract_call(self,contract_abi: list, call_data: str):

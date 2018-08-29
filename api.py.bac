@@ -10,7 +10,6 @@ import hashlib
 import ipfsapi
 import io
 import sqlite3
-import EthWeb3Framework
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
@@ -44,9 +43,34 @@ def login():
     Odict['timestamp'] = ts
     return json.dumps(Odict)
 
+'''
+@app.route('/SetUser')
+def set_user():
+    args = request.args
+    Email = args['Email']
+    Ehash = args['Ehash']
+    StudentID = args['StudentID']
+    role = args['role']
+    
+    user_info = {"Email":Email}
+    try:
+        r = requests.post("http://"+Lhost+":5000/GetInfo", data=user_info)
+        if r.text != "ERROR" and "405 Method Not Allowed" not in r.text:
+            return json.dumps({"status":r.text})
+    except:
+        return json.dumps({"status":"ERROR"})
+    
+    cmd = "python3 "+ProjectPath+"/User/EX/SetUser.py "+Email+" "+Ehash+" "+StudentID+" "+role
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    Odict = dict()
+    Odict["status"] = "SUCCESS"
+    Odict["TID"] = output.split("\n")[1]
+    return json.dumps(Odict)
+'''
+
 @app.route('/SetUserX', methods=['POST'])
 def set_userX():
-    '''
     WhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
     Email = request.form['Email']
     Ehash = request.form['Ehash']
@@ -72,21 +96,83 @@ def set_userX():
     Odict["status"] = "SUCCESS"
     Odict["TID"] = output.split("\n")[1]
     return json.dumps(Odict)
-    '''
+
+@app.route('/GetInfo')
+def get_info():
+    args = request.args
+    Email = args['Email']
+    cmd = "python3 "+ProjectPath+"/User/EX/GetInfo.py "+Email
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    try:
+        Joutput = json.loads(output)
+    except:
+        return ""
+    Odict = dict()
+    Odict['Ehash'] = Joutput[0]
+    Odict['StudentID'] = Joutput[1]
+    #Odict["IPFSHASH"] = Joutput[2]
+    cmd = "timeout 10 ipfs object get "+Joutput[2]
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
+    output = output.decode("utf-8")
+    transaction_record = json.loads(output)
+    Odict['TransactionRecord'] = transaction_record
+    Odict['role'] = Joutput[3]
+    Odict['nounce'] = Joutput[4]
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
+    tmp = output.decode("utf-8").split("#")
+    Odict['Balance'] = int(tmp[0])
+    Odict['Allowance'] = int(tmp[1])
+    return json.dumps(Odict)
 
 @app.route('/GetInfoX', methods=['POST'])
 def get_infoX():
     Email = request.form['Email']
-    a = EthWeb3Framework.EthWeb3Framework()
-    return json.dumps(a.GetInfo(Email))
+    cmd = "python3 "+ProjectPath+"/User/EX/GetInfo.py "+Email
+    output = subprocess.check_output(cmd, shell=True)
+    output = output.decode("utf-8")
+    try:
+        Joutput = json.loads(output)
+    except:
+        return ""
+    Odict = dict()
+    Odict['Ehash'] = Joutput[0]
+    Odict['StudentID'] = Joutput[1]
+    #Odict["IPFSHASH"] = Joutput[2]
+    cmd = "timeout 10 ipfs object get "+Joutput[2]
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
+    output = output.decode("utf-8")
+    transaction_record = json.loads(output)
+    Odict['TransactionRecord'] = transaction_record
+    Odict['role'] = Joutput[3]
+    Odict['nounce'] = Joutput[4]
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Odict['Ehash']
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+    except:
+        return "ERROR"
+    tmp = output.decode("utf-8").split("#")
+    Odict['Balance'] = int(tmp[0])
+    Odict['Allowance'] = int(tmp[1])
+    return json.dumps(Odict)
 
-@app.route('/SetUserStatusX', methods=['POST'])
-def set_user_statusX():
-    Email = request.form['Email']
-    Ustatus = request.form['Ustatus']
-    a = EthWeb3Framework.EthWeb3Framework()
-    result = a.SetUserStatus(Email,Ustatus)
-    return json.dumps(result)
+@app.route('/GetBalance')
+def get_balance():
+    args = request.args
+    Ehash = args['Ehash']
+    cmd = "python3 "+ProjectPath+"/Balance/EX/GetBalance.py "+Ehash
+    output = subprocess.check_output(cmd, shell=True)
+    return output
 
 @app.route('/GetBalanceX', methods=['POST'])
 def get_balanceX():
@@ -95,10 +181,26 @@ def get_balanceX():
     output = subprocess.check_output(cmd, shell=True)
     return output
 
+@app.route('/sendRawTransaction')
+def send_raw_transaction():
+    args = request.args
+    RAW_TRANSACTION = args['RAW_TRANSACTION']
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
+    output = subprocess.check_output(cmd, shell=True)
+    return output
+
 @app.route('/sendRawTransactionX', methods=['POST'])
 def send_raw_transactionX():
     RAW_TRANSACTION = request.form['RAW_TRANSACTION']
     cmd = "python3 "+ProjectPath+"/Transaction/EX/sendRawTransaction.py "+RAW_TRANSACTION
+    output = subprocess.check_output(cmd, shell=True)
+    return output
+
+@app.route('/CheckTransaction')
+def check_transaction():
+    args = request.args
+    TID = args['TID']
+    cmd = "python3 "+ProjectPath+"/Transaction/EX/CheckTransaction.py "+TID
     output = subprocess.check_output(cmd, shell=True)
     return output
 
