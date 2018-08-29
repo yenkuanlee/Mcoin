@@ -1,3 +1,4 @@
+import io
 import ipfsapi
 import json
 from web3 import Web3, HTTPProvider, TestRPCProvider
@@ -74,12 +75,13 @@ class EthWeb3Framework:
 
     def SetUser(self,Email,Ehash,StudentID,role):
         account = self.w3.toChecksumAddress(SuperAccount)
+        #Tbyte = bytes(json.dumps({"Data":Email}))
+        Tbyte = json.dumps({"Data":Email}).encode()
         Email = self.w3.toBytes(text=Email)
         Ehash = self.w3.toChecksumAddress(Ehash)
-        tag = 
+        tag = self.api.object_put(io.BytesIO(Tbyte))['Hash']
+        self.api.pin_add(tag)
         self.w3.personal.unlockAccount(account,"123")
         self.contract_instance.functions.setNode(Email,Ehash,StudentID,tag,role).transact({'from': account})
-
         TID = self.w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': self.w3.toWei(100, "ether")})
-
-        
+        return {"status":"SUCCESS"}
