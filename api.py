@@ -31,14 +31,14 @@ while True:
         pass
 f.close()
 
-Lhost = Cdict['Lhost']#'172.16.0.17'
-SuperEmail = Cdict['SuperEmail']#"yenkuanlee@gmail.com"
-ProjectPath = Cdict['ProjectPath']#"/home/localadmin/yenkuanlee/Mcoin"
-IPFS_IP = Cdict['IPFS_IP']#'127.0.0.1'
-IPFS_PORT = Cdict['IPFS_PORT']#5001
-PicturePath = Cdict['PicturePath']#ProjectPath+"/Application/Vote/Picture/"
-PictureBias = Cdict['PictureBias']#"iii"
-LusersPath = Cdict['LusersPath']#"./User/EX/"
+Lhost = Cdict['Lhost']
+SuperEmail = Cdict['SuperEmail']
+ProjectPath = Cdict['ProjectPath']
+IPFS_IP = Cdict['IPFS_IP']
+IPFS_PORT = Cdict['IPFS_PORT']
+PicturePath = Cdict['PicturePath']
+PictureBias = Cdict['PictureBias']
+LusersPath = Cdict['LusersPath']
 
 @app.route('/kevin', methods=['POST'])
 def index():
