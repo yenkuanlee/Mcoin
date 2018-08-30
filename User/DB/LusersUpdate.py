@@ -1,4 +1,5 @@
 import json
+import os
 import requests
 import sqlite3
 import time
@@ -15,7 +16,7 @@ def GetInfoBalance(Email):
 
 def LusersUpdate():
     Rlist = list()
-    conn = sqlite3.connect(LusersPath+'LocalUsers.db')
+    conn = sqlite3.connect(LusersPath+'/LocalUsers.db')
     c = conn.cursor()
     lusers = c.execute("SELECT * FROM Lusers;")
     for x in lusers:
