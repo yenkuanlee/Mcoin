@@ -38,7 +38,7 @@ EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"
-Edict['Balance'] = ProjectPath+"/Balance/EX/abi"
+Edict['Balance'] = ProjectPath+"/Balance/abi"
 
 class EthWeb3Framework:
     def __init__(self):

@@ -203,7 +203,7 @@ def set_lusers_status():
 @app.route('/Lusers/GetLatestUpdateTime', methods=['POST'])
 def get_lusers_update_time():
     try:
-        f = open(ProjectPath+'/User/EX/latest','r')
+        f = open(ProjectPath+'/User/DB/latest','r')
         line = f.readline()
         line = line.replace("\n","")
         return json.dumps({"status":"SUCCESS", "latest":line})

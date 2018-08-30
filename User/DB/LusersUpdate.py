@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 APIURL = '172.16.0.17'
-LusersPath = "/home/localadmin/yenkuanlee/Mcoin/User/EX/"
+LusersPath = os.path.dirname(os.path.realpath(__file__))
 
 def GetInfoBalance(Email):
     user_info = {"Email":Email}
