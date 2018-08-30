@@ -15,16 +15,30 @@ import EthWeb3Framework
 app = Flask(__name__)
 CORS(app, resources=r'/*')
 
-Lhost = '172.16.0.17'
-SuperEmail = "yenkuanlee@gmail.com"
-ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
+Cpath = os.path.dirname(os.path.realpath(__file__))
+f = open(Cpath+'/mcoin.conf','r')
+Cdict = dict()
+while True:
+    line = f.readline()
+    if not line:break
+    line = line.replace("\n","")
+    line = line.replace(" ","")
+    line = line.split("#")[0]
+    try:
+        tmp = line.split("=")
+        Cdict[tmp[0]] = tmp[1]
+    except:
+        pass
+f.close()
 
-IPFS_IP = '127.0.0.1'
-IPFS_PORT = 5001
-PicturePath = ProjectPath+"/Application/Vote/Picture/"
-PictureBias = "iii"
-
-LusersPath = "./User/EX/"
+Lhost = Cdict['Lhost']#'172.16.0.17'
+SuperEmail = Cdict['SuperEmail']#"yenkuanlee@gmail.com"
+ProjectPath = Cdict['ProjectPath']#"/home/localadmin/yenkuanlee/Mcoin"
+IPFS_IP = Cdict['IPFS_IP']#'127.0.0.1'
+IPFS_PORT = Cdict['IPFS_PORT']#5001
+PicturePath = Cdict['PicturePath']#ProjectPath+"/Application/Vote/Picture/"
+PictureBias = Cdict['PictureBias']#"iii"
+LusersPath = Cdict['LusersPath']#"./User/EX/"
 
 @app.route('/kevin', methods=['POST'])
 def index():

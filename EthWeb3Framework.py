@@ -11,12 +11,30 @@ from ethereum.abi import (
     method_id as get_abi_method_id)
 from ethereum.utils import encode_int, zpad, decode_hex
 
-SuperAccount = "0x42946c2bb22ad422e7366d68d3ca07fb1862ff36"
-ERC20contract_address = "0x06E8b961683Ed5CE732748bF6bcaFF2aAedb689E"
-ProjectPath = "/home/localadmin/yenkuanlee/Mcoin"
-IPFS_IP = '127.0.0.1'
-IPFS_PORT = 5001
-EmailWhiteList = ['yyenkuanlee@gmail.com','luhaoming@gmail.com']
+Cpath = os.path.dirname(os.path.realpath(__file__))
+f = open(Cpath+'/mcoin.conf','r')
+Cdict = dict()
+while True:
+    line = f.readline()
+    if not line:break
+    line = line.replace("\n","")
+    line = line.replace(" ","")
+    line = line.split("#")[0]
+    try:
+        tmp = line.split("=")
+        Cdict[tmp[0]] = tmp[1]
+    except:
+        pass
+f.close()
+
+SuperAccount = Cdict['SuperAccount']
+ERC20contract_address = Cdict['ERC20contract_address']
+ProjectPath = Cdict['ProjectPath']
+IPFS_IP = Cdict['IPFS_IP']
+IPFS_PORT = Cdict['IPFS_PORT']
+
+
+EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/EX/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"
