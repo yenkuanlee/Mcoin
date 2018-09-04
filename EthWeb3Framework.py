@@ -177,7 +177,10 @@ class EthWeb3Framework:
         Rdict['sender'] = self.UserMapping(Transaction['from'])
         Rdict['receiver'] = self.UserMapping(result[1][0])
         Rdict['mcoin'] = result[1][1]
-        return [self.UserMapping(Transaction['from']),self.UserMapping(result[1][0]),result[1][1],result[0]]
+        if result[0]=="transfer":
+            return [self.UserMapping(Transaction['from']),self.UserMapping(result[1][0]),result[1][1],result[0]]
+        elif result[0]=="transferFrom":
+            return [self.UserMapping(Transaction['from']),self.UserMapping(result[1][1]),result[1][2],result[0]]
 
     ## Transaction
     def Trecord(self,Email,T):
@@ -201,10 +204,13 @@ class EthWeb3Framework:
             Tlist.append(str(T.hex()))
         for x in Tlist:
             Tinfo = self.Decoder(x)
-            Tinfo.append(str(datetime.datetime.now()).replace(" ","T"))
-            Tinfo.append(x)
-            self.Trecord(Tinfo[0],json.dumps(Tinfo).replace("\\u0000",""))
-            self.Trecord(Tinfo[1],json.dumps(Tinfo).replace("\\u0000",""))
+            try:
+                Tinfo.append(str(datetime.datetime.now()).replace(" ","T"))
+                Tinfo.append(x)
+                self.Trecord(Tinfo[0],json.dumps(Tinfo).replace("\\u0000",""))
+                self.Trecord(Tinfo[1],json.dumps(Tinfo).replace("\\u0000",""))
+            except: # not call erc20 function, return dict({"status": "NotTransferException"})
+                continue
         return Tlist
 
     def CheckTransaction(self,TID):
