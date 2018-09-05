@@ -214,11 +214,15 @@ class EthWeb3Framework:
         return Tlist
 
     def CheckTransaction(self,TID):
-        result = self.Decoder(TID)
-        TransactionReceipt = self.w3.eth.getTransactionReceipt(TID)
-        Rdict = dict()
-        Rdict['sender'] = result[0]
-        Rdict['receiver'] = result[1]
-        Rdict['mcoin'] = result[2]
-        Rdict['TransactionStatus'] = TransactionReceipt['status']
-        return json.loads(json.dumps(Rdict).replace("\\u0000",""))
+        try:
+            result = self.Decoder(TID)
+            TransactionReceipt = self.w3.eth.getTransactionReceipt(TID)
+            Rdict = dict()
+            Rdict['status'] = "SUCCESS"
+            Rdict['sender'] = result[0]
+            Rdict['receiver'] = result[1]
+            Rdict['mcoin'] = result[2]
+            Rdict['TransactionStatus'] = TransactionReceipt['status']
+            return json.loads(json.dumps(Rdict).replace("\\u0000",""))
+        except:
+            return {"status": "FAILED"}
