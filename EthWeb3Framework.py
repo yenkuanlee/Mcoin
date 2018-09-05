@@ -228,5 +228,5 @@ class EthWeb3Framework:
             Rdict['mcoin'] = result[2]
             Rdict['TransactionStatus'] = TransactionReceipt['status']
             return json.loads(json.dumps(Rdict).replace("\\u0000",""))
-        except:
-            return {"status": "FAILED"}
+        except Exception as e:
+            return {"status": "ERROR", "log": str(e)}

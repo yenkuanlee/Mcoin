@@ -137,8 +137,14 @@ def do_vote():
     r = requests.post("http://"+Lhost+":5000/sendRawTransactionX", data=user_info)
     
     TID = json.loads(r.text)[0]
+    from web3 import Web3, HTTPProvider, TestRPCProvider
+    w3 = Web3(HTTPProvider('http://localhost:3000'))
+    w3.eth.waitForTransactionReceipt(TID)
     user_info = {"TID":TID}
-    r2 = requests.post("http://"+Lhost+":5000/CheckTransactionX", data=user_info)
+    try:
+        r2 = requests.post("http://"+Lhost+":5000/CheckTransactionX", data=user_info)
+    except Exception as e:
+        return {"status":"ERROR", "log": str(e)}
 
     Jinfo = json.loads(r2.text)
     receiver = Jinfo['receiver']
