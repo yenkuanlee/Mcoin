@@ -215,8 +215,10 @@ class EthWeb3Framework:
 
     def CheckTransaction(self,TID):
         result = self.Decoder(TID)
+        TransactionReceipt = self.w3.eth.getTransactionReceipt(TID)
         Rdict = dict()
         Rdict['sender'] = result[0]
         Rdict['receiver'] = result[1]
         Rdict['mcoin'] = result[2]
+        Rdict['TransactionStatus'] = str(TransactionReceipt['status'])
         return json.loads(json.dumps(Rdict).replace("\\u0000",""))

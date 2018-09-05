@@ -28,8 +28,11 @@ def LusersUpdate():
 
 while True:
     now = datetime.today()
-    LusersUpdate()
-    f = open('latest','w')
-    f.write(str(now))
-    f.close()
+    try:
+        LusersUpdate()
+        f = open('latest','w')
+        f.write(str(now))
+        f.close()
+    except:
+        time.sleep(10)
     time.sleep(10)
