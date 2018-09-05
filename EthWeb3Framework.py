@@ -220,5 +220,5 @@ class EthWeb3Framework:
         Rdict['sender'] = result[0]
         Rdict['receiver'] = result[1]
         Rdict['mcoin'] = result[2]
-        Rdict['TransactionStatus'] = str(TransactionReceipt['status'])
+        Rdict['TransactionStatus'] = TransactionReceipt['status']
         return json.loads(json.dumps(Rdict).replace("\\u0000",""))
