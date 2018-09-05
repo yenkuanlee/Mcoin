@@ -64,8 +64,12 @@ def set_userX():
     Ehash = request.form['Ehash']
     StudentID = request.form['StudentID']
     role = request.form['role']
+    try:
+        Name = request.form['Name']
+    except:
+        Name = request.form['Email']
     a = EthWeb3Framework.EthWeb3Framework()
-    result = a.SetUser(Email,Ehash,StudentID,role)
+    result = a.SetUser(Email,Ehash,StudentID,role,Name)
     return json.dumps(result)
 
 @app.route('/GetInfoX', methods=['POST'])

@@ -80,6 +80,7 @@ class EthWeb3Framework:
     ## User
     def GetInfo(self,Email):
         Odict = dict()
+        Odict['Email'] = Email
         try:
             Email = self.w3.toBytes(text=Email)
             result = self.contract_instance.functions.GetInfo(Email).call()
@@ -87,6 +88,7 @@ class EthWeb3Framework:
             Odict['StudentID'] = result[1]
             try:
                 Odict['TransactionRecord'] = self.api.object_get(result[2])
+                Odict['Name'] = Odict['TransactionRecord']['Data']
             except:
                 Odict['TransactionRecord'] = "GetTransactionRecordFailed"
             Odict['role'] = result[3]
@@ -113,7 +115,9 @@ class EthWeb3Framework:
         result = self.contract_instance.functions.GetUserMapping(Ehash).call().decode("utf-8")
         return result.replace("\x00","")
 
-    def SetUser(self,Email,Ehash,StudentID,role):
+    def SetUser(self,Email,Ehash,StudentID,role,name=False):
+        if not name:
+            name = Email
         info = self.GetInfo(Email)
         if Email in EmailWhiteList:
             pass
@@ -122,7 +126,7 @@ class EthWeb3Framework:
         elif self.UserMapping(Ehash)!="":
             return {"status":"EhashAlreadyUsedException"}
         account = self.w3.toChecksumAddress(SuperAccount)
-        Tbyte = json.dumps({"Data":Email}).encode()
+        Tbyte = json.dumps({"Data":name}).encode()
         Email = self.w3.toBytes(text=Email)
         Ehash = self.w3.toChecksumAddress(Ehash)
         tag = self.api.object_put(io.BytesIO(Tbyte))['Hash']
