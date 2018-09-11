@@ -40,9 +40,9 @@ PicturePath = Cdict['PicturePath']
 PictureBias = Cdict['PictureBias']
 LusersPath = Cdict['LusersPath']
 
-@app.route('/kevin', methods=['POST'])
+@app.route('/')
 def index():
-    return request.form['key1']
+    return "Hello World!!"
 
 @app.route('/Login', methods=['POST'])
 def login():
