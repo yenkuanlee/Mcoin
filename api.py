@@ -39,6 +39,7 @@ IPFS_PORT = Cdict['IPFS_PORT']
 PicturePath = Cdict['PicturePath']
 PictureBias = Cdict['PictureBias']
 LusersPath = Cdict['LusersPath']
+AppStorePath = Cdict['AppStorePath']
 
 @app.route('/')
 def index():
@@ -219,6 +220,63 @@ def get_lusers_update_time():
         return json.dumps({"status":"SUCCESS", "latest":line})
     except:
         return json.dumps({"status":"GetLatestUpdateTimeFailed"})
+
+############################################################################################
+## AppStore
+@app.route('/AppStore/PushToStore', methods=['POST'])
+def push_to_store():
+    AppName = request.form['AppName']
+    UserName = request.form['UserName']
+    url = request.form['url']
+    bcode = request.form['bcode']
+    description = request.form['description']
+    deadline = request.form['deadline']
+    PhoneNumber = request.form['PhoneNumber']
+    ts = str(time.time())
+    TmpPath = "/tmp/"+ts
+    fw = open(TmpPath,'w')
+    fw.write(bcode)
+    fw.close()
+    try:
+        api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
+        result = api.add(TmpPath)
+        os.system("rm -rf "+TmpPath)
+        conn = sqlite3.connect(AppStorePath+'AppStore.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS AppStore(AppName text, UserName text, url text, icon text,description text, deadline text, PhoneNumber text, status int, PRIMARY KEY(AppName));")
+        c.execute("INSERT INTO AppStore VALUES('"+AppName+"','"+UserName+"','"+url+"','"+result['Hash']+"','"+description+"','"+deadline+"','"+PhoneNumber+"',0);")
+        conn.commit()
+        return json.dumps({"status": "SUCCESS"})
+    except Exception as e:
+        return json.dumps({"status": "ERROR", "log": str(e), "function": "PushToStore"})
+
+@app.route('/AppStore/AppList', methods=['POST'])
+def app_list():
+    try:
+        ResultList = list()
+        conn = sqlite3.connect(AppStorePath+'AppStore.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM AppStore;")
+        api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
+        for x in c:
+            iconBcode = api.cat(x[3]).decode('utf-8')
+            ResultList.append({"AppName":x[0], "UserName": x[1], "url":x[2], "icon":iconBcode, "description":x[4], "deadline":x[5],"PhoneNumber":x[6], "status": x[7]})
+        return json.dumps({"status": "SUCCESS", "results": ResultList})
+    except Exception as e:
+        return json.dumps({"status": "ERROR", "log": str(e), "function": "AppList"})
+
+@app.route('/AppStore/SetAppStatus', methods=['POST'])
+def set_app_status():
+  AppName = request.form['AppName']
+  status = request.form['status']
+  try:
+    conn = sqlite3.connect(AppStorePath+'AppStore.db')
+    c = conn.cursor()
+    c.execute("UPDATE AppStore SET status="+status+" WHERE AppName = '"+AppName+"';")
+    conn.commit()
+    return json.dumps({"status":"SUCCESS"})
+  except Exception as e:
+    return json.dumps({"status": "ERROR", "log": str(e), "function": "SetAppStatus"})
 
 if __name__ == '__main__':
     app.run(host=Lhost, debug=True)

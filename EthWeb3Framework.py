@@ -34,7 +34,7 @@ IPFS_IP = Cdict['IPFS_IP']
 IPFS_PORT = Cdict['IPFS_PORT']
 
 
-EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com']
+EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com', '1061275', '05170445']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"
@@ -226,7 +226,10 @@ class EthWeb3Framework:
             Rdict['sender'] = result[0]
             Rdict['receiver'] = result[1]
             Rdict['mcoin'] = result[2]
-            Rdict['TransactionStatus'] = TransactionReceipt['status']
+            try:
+                Rdict['TransactionStatus'] = TransactionReceipt['status']
+            except:
+                Rdict['TransactionStatus'] = '0'
             return json.loads(json.dumps(Rdict).replace("\\u0000",""))
         except Exception as e:
-            return {"status": "ERROR", "log": str(e)}
+            return {"status": "ERROR", "log": str(e), "TID": str(TID)}
