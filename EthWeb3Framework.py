@@ -34,7 +34,7 @@ IPFS_IP = Cdict['IPFS_IP']
 IPFS_PORT = Cdict['IPFS_PORT']
 
 
-EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com', '1061275', '05170445']
+EmailWhiteList = ['yenkuanlee@gmail.com','luhaoming@gmail.com', '1061275', '05170445', '8100464']
 Edict = dict()
 Edict['User'] = ProjectPath+"/User/users.json"
 Edict['Application'] = ProjectPath+"/Application/app.json"

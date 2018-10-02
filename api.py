@@ -69,9 +69,15 @@ def set_userX():
         Name = request.form['Name']
     except:
         Name = request.form['Email']
-    a = EthWeb3Framework.EthWeb3Framework()
-    result = a.SetUser(Email,Ehash,StudentID,role,Name)
-    return json.dumps(result)
+    Jinfo = {'account':Email}
+    r = requests.post("http://120.125.73.108:5000/GetSUstatus", data=Jinfo)
+    SUstatus = json.loads(r.text)
+    if SUstatus['status']:
+        a = EthWeb3Framework.EthWeb3Framework()
+        result = a.SetUser(Email,Ehash,StudentID,role,Name)
+        return json.dumps(result)
+    else:
+        return json.dumps({"status": "PleaseLoginFirstException"})
 
 @app.route('/GetInfoX', methods=['POST'])
 def get_infoX():

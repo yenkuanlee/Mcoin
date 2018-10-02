@@ -2,7 +2,7 @@
 import EthWeb3Framework
 import sys
 
-Email = "yenkuanlee@gmail.com"
+Email = "8100464"
 Ehash = "0x42946C2Bb22ad422e7366d68d3Ca07fB1862ff36"
 StudentID = "F74982260"
 role = "admin"
