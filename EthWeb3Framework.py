@@ -58,7 +58,7 @@ class EthWeb3Framework:
         line = f.readline()
         self.ERC20abi = json.loads(line)
         f.close()
-        self.ERC20contract_instance = self.w3.eth.contract(abi=self.ERC20abi, address=ERC20contract_address)
+        self.ERC20contract_instance = self.w3.eth.contract(abi=self.ERC20abi, address=self.w3.toChecksumAddress(ERC20contract_address))
 
     ## Balance
     def GetBalance(self,Ehash):
