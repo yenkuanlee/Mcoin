@@ -5,11 +5,11 @@ import json
 from web3 import Web3, HTTPProvider, TestRPCProvider
 import os
 from web3.middleware import geth_poa_middleware
-from ethereum.abi import (
-    decode_abi,
-    normalize_name as normalize_abi_method_name,
-    method_id as get_abi_method_id)
-from ethereum.utils import encode_int, zpad, decode_hex
+#from ethereum.abi import (
+#    decode_abi,
+#    normalize_name as normalize_abi_method_name,
+#    method_id as get_abi_method_id)
+#from ethereum.utils import encode_int, zpad, decode_hex
 
 Cpath = os.path.dirname(os.path.realpath(__file__))
 f = open(Cpath+'/mcoin.conf','r')
