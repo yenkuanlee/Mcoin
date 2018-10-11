@@ -4,8 +4,6 @@
   4001
   5000
   5001
-
-
 (1) 安裝套件
   python3.6
     sudo add-apt-repository ppa:jonathonf/python-3.6
@@ -20,8 +18,9 @@
     sudo add-apt-repository ppa:ethereum/ethereum
     sudo apt-get update
     sudo apt-get -qqy install solc
+    sudo apt-get -qqy install sqlite3
   
-  pyethereum
+  pyethereum install
     sudo apt-get install libssl-dev build-essential automake pkg-config libtool libffi-dev libgmp-dev libyaml-cpp-dev
     git clone https://github.com/ethereum/pyethereum/
     cd pyethereum
@@ -33,30 +32,22 @@
     flask-cors
     py-solc
     ipfsapi
-
   ipfs
     wget https://dist.ipfs.io/go-ipfs/v0.4.17/go-ipfs_v0.4.17_linux-amd64.tar.gz
     tar xvfz go-ipfs_v0.4.17_linux-amd64.tar.gz
     sudo mv go-ipfs/ipfs /usr/local/bin/ipfs
-
-
 (2) 改參數
   find . -type f -print0 | xargs -0 sed -i 's///g'
     erc20 address
     super address
     password of super user
   mcoin.conf
-
-
 (3) 啟動
   ipfs
   api
-
-
+  LusersUpdate
 (4) User合約
     第一台執行deploy
     第n台後複製users.json
-
-
 (5) ipfs connect所有節點
 ```

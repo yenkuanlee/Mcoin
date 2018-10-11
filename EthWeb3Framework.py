@@ -10,6 +10,7 @@ from ethereum.abi import (
     normalize_name as normalize_abi_method_name,
     method_id as get_abi_method_id)
 from ethereum.utils import encode_int, zpad, decode_hex
+import requests
 
 Cpath = os.path.dirname(os.path.realpath(__file__))
 f = open(Cpath+'/mcoin.conf','r')
@@ -27,6 +28,7 @@ while True:
         pass
 f.close()
 
+Lhost = Cdict['Lhost']
 SuperAccount = Cdict['SuperAccount']
 ERC20contract_address = Cdict['ERC20contract_address']
 ProjectPath = Cdict['ProjectPath']
@@ -127,6 +129,7 @@ class EthWeb3Framework:
             return {"status":"EhashAlreadyUsedException"}
         account = self.w3.toChecksumAddress(SuperAccount)
         Tbyte = json.dumps({"Data":name}).encode()
+        StringEmail = Email
         Email = self.w3.toBytes(text=Email)
         Ehash = self.w3.toChecksumAddress(Ehash)
         tag = self.api.object_put(io.BytesIO(Tbyte))['Hash']
@@ -150,9 +153,20 @@ class EthWeb3Framework:
             SuperAccountX = self.w3.toChecksumAddress(SuperAccount)
             self.w3.personal.unlockAccount(SuperAccountX,"123")
             TID = self.contract_instance.functions.setTag(Email,tag).transact({'from': SuperAccountX})
-            return {"status":"SUCCESS", "TID":TID.hex()}
+            #return {"status":"SUCCESS", "TID":TID.hex()}
         except Exception as e:
             return {"status":"SetUserStatusFailed", "log":str(e)}
+        try:
+            swarm = self.api.swarm_peers()
+            IPList = [Lhost]
+            for x in swarm['Peers']:
+                IPList.append(x['Addr'].split("/")[2])
+            for x in IPList:
+                user_info = {"Email":StringEmail}
+                r = requests.post("http://"+x+":5000/Lusers/InsertLusers", data=user_info)
+            return {"status":"SUCCESS", "TID":TID.hex()}
+        except Exception as e:
+            return {"status": "InsertLuserFailed", "log": str(e)}
 
     ## Input Decoder
     def decode_contract_call(self,contract_abi: list, call_data: str):

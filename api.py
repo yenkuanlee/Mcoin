@@ -202,6 +202,18 @@ def get_lusers():
         return json.dumps({"status":"GetLusersFailed"})
     return json.dumps(ResultList)
 
+@app.route('/Lusers/InsertLusers', methods=['POST'])
+def insert_lusers():
+    Email = request.form['Email']
+    conn = sqlite3.connect(LusersPath+'LocalUsers.db')
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO Lusers VALUES('"+Email+"',0,0);")
+        conn.commit()
+        return json.dumps({"status":"SUCCESS"})
+    except:
+        return json.dumps({"status":"InsertLusersStatusFailed"})
+
 @app.route('/Lusers/SetLusersStatus', methods=['POST'])
 def set_lusers_status():
     Email = request.form['Email']

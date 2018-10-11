@@ -5,7 +5,22 @@ import sqlite3
 import time
 from datetime import datetime
 
-APIURL = '172.16.0.17'
+APIURL = "localhost"
+f = open('../../mcoin.conf','r')
+while True:
+    line = f.readline()
+    if not line:
+        break
+    line = line.replace("\n","")
+    line = line.replace(" ","")
+    line = line.split("#")[0]
+    try:
+        tmp = line.split("=")
+        if tmp[0]=="Lhost":
+            APIURL = tmp[1]
+    except:
+        pass
+f.close()
 LusersPath = os.path.dirname(os.path.realpath(__file__))
 
 def GetInfoBalance(Email):
