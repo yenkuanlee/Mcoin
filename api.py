@@ -296,5 +296,29 @@ def set_app_status():
   except Exception as e:
     return json.dumps({"status": "ERROR", "log": str(e), "function": "SetAppStatus"})
 
+#############################################################################
+@app.route('/NTUtea/SetInfo', methods=['POST'])
+def set_ntu_info():
+    try:
+        TeaID = request.form['TeaID']
+        name = request.form['name']
+        color = request.form['color']
+        description = request.form['description']
+        date = request.form['date']
+        os.system("python3 /home/localadmin/yenkuanlee/NTU/SetUser.py '"+TeaID+"' '"+name+"' '"+color+"' '"+description+"' '"+date+"'")
+    except Exception as e:
+        return json.dumps({"status":"SetNTUIntoException","log":str(e)})
+    return json.dumps({"status":"SUCCESS"})
+
+@app.route('/NTUtea/GetInfo', methods=['POST'])
+def get_ntu_info():
+    try:
+        TeaID = request.form['TeaID']
+        cmd = "python3 /home/localadmin/yenkuanlee/NTU/GetInfo.py "+TeaID
+        output = subprocess.check_output(cmd, shell=True)
+        return output
+    except Exception as e:
+        return json.dumps({"status":"GetNTUIntoException","log":str(e)})
+
 if __name__ == '__main__':
     app.run(host=Lhost, debug=True)
