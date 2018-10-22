@@ -138,9 +138,22 @@ class EthWeb3Framework:
             self.w3.personal.unlockAccount(account,"123")
             self.contract_instance.functions.setNode(Email,Ehash,StudentID,tag,role).transact({'from': account})
             TID = self.w3.eth.sendTransaction({'to': Ehash, 'from': account, 'value': self.w3.toWei(100, "ether")})
-            return {"status":"SUCCESS", "TID":TID.hex()}
+            #return {"status":"SUCCESS", "TID":TID.hex()}
         except:
             return {"status":"SetUserFailed"}
+        try:
+            #swarm = self.api.swarm_peers()
+            #IPList = [Lhost]
+            #for x in swarm['Peers']:
+            #    IPList.append(x['Addr'].split("/")[2])
+            #for x in IPList:
+            #    user_info = {"Email":StringEmail}
+            #    r = requests.post("http://"+x+":5000/Lusers/InsertLusers", data=user_info)
+            user_info = {"Email":StringEmail}
+            r = requests.post("http://"+Lhost+":5000/Lusers/InsertLusers", data=user_info)
+            return {"status":"SUCCESS", "TID":TID.hex()}
+        except Exception as e:
+            return {"status": "InsertLuserFailed", "log": str(e)}
 
     def SetUserStatus(self,Email,Ustatus):
         try:
@@ -153,20 +166,9 @@ class EthWeb3Framework:
             SuperAccountX = self.w3.toChecksumAddress(SuperAccount)
             self.w3.personal.unlockAccount(SuperAccountX,"123")
             TID = self.contract_instance.functions.setTag(Email,tag).transact({'from': SuperAccountX})
-            #return {"status":"SUCCESS", "TID":TID.hex()}
-        except Exception as e:
-            return {"status":"SetUserStatusFailed", "log":str(e)}
-        try:
-            swarm = self.api.swarm_peers()
-            IPList = [Lhost]
-            for x in swarm['Peers']:
-                IPList.append(x['Addr'].split("/")[2])
-            for x in IPList:
-                user_info = {"Email":StringEmail}
-                r = requests.post("http://"+x+":5000/Lusers/InsertLusers", data=user_info)
             return {"status":"SUCCESS", "TID":TID.hex()}
         except Exception as e:
-            return {"status": "InsertLuserFailed", "log": str(e)}
+            return {"status":"SetUserStatusFailed", "log":str(e)}
 
     ## Input Decoder
     def decode_contract_call(self,contract_abi: list, call_data: str):
