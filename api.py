@@ -72,7 +72,7 @@ def set_userX():
     Jinfo = {'account':Email}
     r = requests.post("http://120.125.73.108:5000/GetSUstatus", data=Jinfo)
     SUstatus = json.loads(r.text)
-    if SUstatus['status']:
+    if SUstatus['status'] or 'example.com' in Email:
         a = EthWeb3Framework.EthWeb3Framework()
         result = a.SetUser(Email,Ehash,StudentID,role,Name)
         return json.dumps(result)
@@ -295,6 +295,17 @@ def set_app_status():
     return json.dumps({"status":"SUCCESS"})
   except Exception as e:
     return json.dumps({"status": "ERROR", "log": str(e), "function": "SetAppStatus"})
+
+@app.route('/AppStore/DeleteAPP', methods=['POST'])
+def delete_app():
+  AppName = request.form['AppName']
+  try:
+    conn = sqlite3.connect(AppStorePath+'AppStore.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM AppStore WHERE AppName = '"+AppName+"';")
+    conn.commit()
+  except Exception as e:
+    return json.dumps({"status": "ERROR", "log": str(e), "function": "DeleteAPP"})
 
 #############################################################################
 @app.route('/NTUtea/SetInfo', methods=['POST'])
