@@ -321,10 +321,12 @@ def set_ntu_info():
         return json.dumps({"status":"SetNTUIntoException","log":str(e)})
     return json.dumps({"status":"SUCCESS"})
 
-@app.route('/NTUtea/GetInfo', methods=['POST'])
+@app.route('/NTUtea/GetInfo')
 def get_ntu_info():
     try:
-        TeaID = request.form['TeaID']
+        args = request.args
+        TeaID = args['TeaID']
+        #TeaID = request.form['TeaID']
         cmd = "python3 /home/localadmin/yenkuanlee/NTU/GetInfo.py "+TeaID
         output = subprocess.check_output(cmd, shell=True)
         return output
@@ -332,4 +334,4 @@ def get_ntu_info():
         return json.dumps({"status":"GetNTUIntoException","log":str(e)})
 
 if __name__ == '__main__':
-    app.run(host=Lhost, debug=True)
+    app.run(host=Lhost,port=8080, debug=True)
