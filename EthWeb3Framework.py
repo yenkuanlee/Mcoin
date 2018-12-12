@@ -156,6 +156,7 @@ class EthWeb3Framework:
                 Jr = json.loads(r.text)
                 if Jr['status'] == 'SUCCESS':
                     break
+                time.sleep(1)
             return {"status":"SUCCESS", "TID":TID.hex()}
         except Exception as e:
             return {"status": "InsertLuserFailed", "log": str(e)}
