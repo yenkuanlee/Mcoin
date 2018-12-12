@@ -11,6 +11,7 @@ from ethereum.abi import (
     method_id as get_abi_method_id)
 from ethereum.utils import encode_int, zpad, decode_hex
 import requests
+import time
 
 Cpath = os.path.dirname(os.path.realpath(__file__))
 f = open(Cpath+'/mcoin.conf','r')
@@ -150,7 +151,11 @@ class EthWeb3Framework:
             #    user_info = {"Email":StringEmail}
             #    r = requests.post("http://"+x+":5000/Lusers/InsertLusers", data=user_info)
             user_info = {"Email":StringEmail}
-            r = requests.post("http://"+Lhost+":5000/Lusers/InsertLusers", data=user_info)
+            while True:
+                r = requests.post("http://"+x+":8080/Lusers/InsertLusers", data=user_info)
+                Jr = json.loads(r.text)
+                if Jr['status'] == 'SUCCESS':
+                    break
             return {"status":"SUCCESS", "TID":TID.hex()}
         except Exception as e:
             return {"status": "InsertLuserFailed", "log": str(e)}
